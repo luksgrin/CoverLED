@@ -39,7 +39,8 @@ app always gets a dot, or **Ignore** so it never does.
   Rules: transparent background (that *is* the shape), drawn in **white** (gray = dimmer),
   ≤ 1024×1024 px, ≤ 2 MB, square canvas works best. Stored downscaled to 128×128 privately.
 - **Position**: drag the dot *and* the charging line on a scaled outline of the cover, with a live preview on
-  the real cover. The shaded band is the area the indicator never uses (camera cutout insets).
+  the real cover. The shaded area marks the cameras — a hint only; you can place things there, at the
+  risk of the cameras hiding part of them. By default the charging line sits just above it.
 
 ## Install and set up
 

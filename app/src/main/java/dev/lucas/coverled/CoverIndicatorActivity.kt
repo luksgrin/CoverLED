@@ -49,16 +49,14 @@ class CoverIndicatorActivity : AppCompatActivity() {
     private lateinit var dots: DotView
     private lateinit var battery: TextView
     private lateinit var root: FrameLayout
+    private var cutoutBottomPx = 0
 
-    /** Center the label on (batteryX, batteryY) of the cutout-free area, clamped to stay inside it. */
+    /** Center the label on (batteryX, batteryY) of the full panel; may overlap the camera if the user wants. */
     private fun placeBattery(root: FrameLayout) {
-        if (battery.width == 0) return
-        val areaW = root.width - root.paddingLeft - root.paddingRight
-        val areaH = root.height - root.paddingTop - root.paddingBottom
-        val x = (settings.batteryX * areaW - battery.width / 2f).coerceIn(0f, (areaW - battery.width).toFloat().coerceAtLeast(0f))
-        val y = (settings.batteryY * areaH - battery.height / 2f).coerceIn(0f, (areaH - battery.height).toFloat().coerceAtLeast(0f))
-        battery.translationX = x
-        battery.translationY = y
+        if (battery.width == 0 || root.width == 0) return
+        val y = settings.batteryY.let { if (it < 0f) Settings.defaultBatteryY(cutoutBottomPx / root.height.toFloat()) else it }
+        battery.translationX = (settings.batteryX * root.width - battery.width / 2f).coerceIn(0f, (root.width - battery.width).toFloat().coerceAtLeast(0f))
+        battery.translationY = (y * root.height - battery.height / 2f).coerceIn(0f, (root.height - battery.height).toFloat().coerceAtLeast(0f))
     }
     private lateinit var settings: Settings
     private val handler = Handler(Looper.getMainLooper())
@@ -167,11 +165,12 @@ class CoverIndicatorActivity : AppCompatActivity() {
         battery.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> placeBattery(root) }
         this.root = root
         setContentView(root)
-        // Keep everything clear of the camera cutout (Flip7: cameras punch into the cover panel).
+        // The whole panel is usable; the camera cutout only informs the *default* charging-line spot.
         androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
             val c = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
-            v.setPadding(c.left, c.top, c.right, c.bottom)
+            cutoutBottomPx = c.bottom
             Log.i(TAG, "cutout insets l=${c.left} t=${c.top} r=${c.right} b=${c.bottom}")
+            placeBattery(v as FrameLayout)
             insets
         }
         applyIntent(intent)

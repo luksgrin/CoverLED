@@ -46,7 +46,7 @@ class PositionActivity : AppCompatActivity() {
         btn(R.string.position_center) { preview.setDot(0.5f, 0.5f) }
         btn(R.string.position_top) { preview.setDot(0.5f, 0.15f) }
         btn(R.string.position_bottom) { preview.setDot(0.5f, 0.8f) }
-        btn(R.string.position_reset_battery) { preview.setBattery(0.5f, 0.9f) }
+        btn(R.string.position_reset_battery) { preview.resetBattery() }
         root.addView(buttons)
         setContentView(root)
     }
@@ -72,43 +72,48 @@ class PositionActivity : AppCompatActivity() {
         private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(160, 160, 160); textSize = dp(11).toFloat(); textAlign = Paint.Align.CENTER }
         private val sample = "⚡ 79 % · 1 h 41 min"
 
-        // real cover geometry: aspect and the cutout *insets* (what the indicator pads by).
-        // Positions are fractions of the inset-free area, exactly as in CoverIndicatorActivity.
+        // real cover geometry: aspect and the cutout insets. The inset band is drawn as a hint only;
+        // positions are fractions of the full panel and may go anywhere, exactly as in the indicator.
         private var aspect = 748f / 720f
-        private var insetL = 0f; private var insetT = 0f; private var insetR = 0f; private var insetB = 0f   // fractions of full size
-        private val usable = RectF()
+        private var insetB = 0f                       // bottom cutout inset (fraction) → default charging-line spot
+        private val cameras = ArrayList<RectF>()      // camera rectangles as fractions of the panel
         init {
             CoverDisplays.cover(context)?.let { d ->
                 val p = android.graphics.Point(); @Suppress("DEPRECATION") d.getRealSize(p); aspect = p.x.toFloat() / p.y
                 d.cutout?.let { c ->
-                    insetL = c.safeInsetLeft / p.x.toFloat(); insetR = c.safeInsetRight / p.x.toFloat()
-                    insetT = c.safeInsetTop / p.y.toFloat(); insetB = c.safeInsetBottom / p.y.toFloat()
+                    insetB = c.safeInsetBottom / p.y.toFloat()
+                    c.boundingRects.filter { !it.isEmpty }.forEach { r ->
+                        cameras.add(RectF(r.left / p.x.toFloat(), r.top / p.y.toFloat(), r.right / p.x.toFloat(), r.bottom / p.y.toFloat()))
+                    }
                 }
             }
         }
 
         private var dx = settings.dotX; private var dy = settings.dotY
-        private var bx = settings.batteryX; private var by = settings.batteryY
+        private var bx = settings.batteryX
+        private var by = settings.batteryY.let { if (it < 0f) Settings.defaultBatteryY(insetB) else it }
         private var dragging = 0   // 0 none, 1 dot, 2 battery
 
         fun setDot(x: Float, y: Float) { dx = x.coerceIn(0f, 1f); dy = y.coerceIn(0f, 1f); settings.dotX = dx; settings.dotY = dy; invalidate() }
+        fun resetBattery() { settings.resetBattery(); bx = 0.5f; by = Settings.defaultBatteryY(insetB); invalidate() }
         fun setBattery(x: Float, y: Float) { bx = x.coerceIn(0f, 1f); by = y.coerceIn(0f, 1f); settings.batteryX = bx; settings.batteryY = by; invalidate() }
 
         override fun onSizeChanged(w: Int, h: Int, ow: Int, oh: Int) {
             var fw = w.toFloat(); var fh = fw / aspect
             if (fh > h) { fh = h.toFloat(); fw = fh * aspect }
             frame.set((w - fw) / 2, (h - fh) / 2, (w + fw) / 2, (h + fh) / 2)
-            usable.set(frame.left + insetL * fw, frame.top + insetT * fh, frame.right - insetR * fw, frame.bottom - insetB * fh)
         }
 
-        private fun px(fx: Float) = usable.left + fx * usable.width()
-        private fun py(fy: Float) = usable.top + fy * usable.height()
+        private fun px(fx: Float) = frame.left + fx * frame.width()
+        private fun py(fy: Float) = frame.top + fy * frame.height()
 
         override fun onDraw(c: Canvas) {
             val r = dp(24).toFloat()
             c.drawRoundRect(frame, r, r, paintFill)
-            // everything outside the usable area is unreachable (camera band / cutout insets)
-            c.save(); c.clipOutRect(usable); c.drawRoundRect(frame, r, r, paintCutout); c.restore()
+            // camera area(s): a hint only — things placed there may be hidden by the cameras
+            c.save(); c.clipRect(frame)
+            cameras.forEach { c.drawRoundRect(px(it.left), py(it.top), px(it.right), py(it.bottom), dp(10).toFloat(), dp(10).toFloat(), paintCutout) }
+            c.restore()
             c.drawRoundRect(frame, r, r, paintFrame)
             c.drawCircle(px(dx), py(dy), dp(9).toFloat(), paintDot)
             c.drawText(sample, px(bx), py(by) + paintText.textSize / 3, paintText)
@@ -128,7 +133,7 @@ class PositionActivity : AppCompatActivity() {
         }
 
         private fun move(e: MotionEvent) {
-            val fx = (e.x - usable.left) / usable.width(); val fy = (e.y - usable.top) / usable.height()
+            val fx = (e.x - frame.left) / frame.width(); val fy = (e.y - frame.top) / frame.height()
             if (dragging == 2) setBattery(fx, fy) else setDot(fx, fy)
         }
 

@@ -62,9 +62,12 @@ class Settings(context: Context) {
     var batteryX: Float
         get() = prefs.getFloat(KEY_BAT_X, 0.5f)
         set(v) = prefs.edit().putFloat(KEY_BAT_X, v.coerceIn(0f, 1f)).apply()
+    /** Negative = automatic: just above the camera cutout band (see [defaultBatteryY]). */
     var batteryY: Float
-        get() = prefs.getFloat(KEY_BAT_Y, 0.9f)
+        get() = prefs.getFloat(KEY_BAT_Y, -1f)
         set(v) = prefs.edit().putFloat(KEY_BAT_Y, v.coerceIn(0f, 1f)).apply()
+
+    fun resetBattery() = prefs.edit().remove(KEY_BAT_X).remove(KEY_BAT_Y).apply()
 
     companion object {
         const val KEY_BAT_X = "battery_x"
@@ -86,6 +89,8 @@ class Settings(context: Context) {
         const val SHAPE_MAX_INPUT_BYTES = 2L * 1024 * 1024
         const val SHAPE_STORED_PX = 128
         fun shapeFile(context: android.content.Context) = java.io.File(context.filesDir, SHAPE_FILE)
+        /** Default charging-line Y for a given bottom cutout inset (fraction of height): sits just above it. */
+        fun defaultBatteryY(cutoutBottomFrac: Float) = (1f - cutoutBottomFrac - 0.07f).coerceIn(0.5f, 0.93f)
         const val STYLE_HARD = "hard"
         const val STYLE_BREATHE = "breathe"
         const val STYLE_LUBDUB = "lubdub"
