@@ -38,7 +38,7 @@
     <string name="dev_log">Log</string>
     <string name="style_lubdub">Lub-dub</string>
     <string name="dev_manual">Manual indicator (bypasses notifications)</string>
-    <string name="dev_post_notif">Post test notification in 8 s (close the phone)</string>
+    <string name="dev_post_notif">Post test notification in 8 s</string>
     <string name="arr_row">Row</string>
     <string name="shape_rules_title">Rules for a custom shape</string>
     <string name="arr_shape">Shape</string>
@@ -104,4 +104,5 @@
     <string name="current_shape">Current shape</string>
     <string name="pending_title">Right now</string>
     <string name="reset_dot">Reset dot</string>
+    <string name="dev_post_hint">Tap, then close the phone and watch the cover.</string>
 </resources>

@@ -34,7 +34,7 @@
     <string name="dev_log">Registo</string>
     <string name="style_lubdub">Batimento</string>
     <string name="dev_manual">Indicador manual (ignora as notificações)</string>
-    <string name="dev_post_notif">Enviar notificação de teste em 8 s (feche o telemóvel)</string>
+    <string name="dev_post_notif">Enviar notificação de teste em 8 s</string>
     <string name="arr_row">Fila</string>
     <string name="shape_rules_title">Regras para uma forma personalizada</string>
     <string name="arr_shape">Forma</string>
@@ -98,4 +98,5 @@
     <string name="current_shape">Forma atual</string>
     <string name="pending_title">Neste momento</string>
     <string name="reset_dot">Repor ponto</string>
+    <string name="dev_post_hint">Toque, feche o telemóvel e olhe para o ecrã exterior.</string>
 </resources>

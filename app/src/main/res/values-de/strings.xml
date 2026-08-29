@@ -34,7 +34,7 @@
     <string name="dev_log">Protokoll</string>
     <string name="style_lubdub">Herzschlag</string>
     <string name="dev_manual">Manueller Indikator (ignoriert Benachrichtigungen)</string>
-    <string name="dev_post_notif">Testbenachrichtigung in 8 s senden (Telefon zuklappen)</string>
+    <string name="dev_post_notif">Testbenachrichtigung in 8 s senden</string>
     <string name="arr_row">Reihe</string>
     <string name="shape_rules_title">Regeln für eine eigene Form</string>
     <string name="arr_shape">Form</string>
@@ -98,4 +98,5 @@
     <string name="current_shape">Aktuelle Form</string>
     <string name="pending_title">Gerade jetzt</string>
     <string name="reset_dot">Punkt zurücksetzen</string>
+    <string name="dev_post_hint">Tippen, Telefon zuklappen und aufs Außendisplay schauen.</string>
 </resources>

@@ -34,7 +34,7 @@
     <string name="dev_log">ログ</string>
     <string name="style_lubdub">鼓動</string>
     <string name="dev_manual">手動表示（通知を無視）</string>
-    <string name="dev_post_notif">8秒後にテスト通知を送る（端末を閉じてください）</string>
+    <string name="dev_post_notif">8秒後にテスト通知を送る</string>
     <string name="arr_row">横並び</string>
     <string name="shape_rules_title">カスタム形状のルール</string>
     <string name="arr_shape">図形</string>
@@ -98,4 +98,5 @@
     <string name="current_shape">現在の形</string>
     <string name="pending_title">現在</string>
     <string name="reset_dot">点をリセット</string>
+    <string name="dev_post_hint">タップして端末を閉じ、カバー画面を確認してください。</string>
 </resources>

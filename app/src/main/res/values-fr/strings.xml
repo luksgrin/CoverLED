@@ -34,7 +34,7 @@
     <string name="dev_log">Journal</string>
     <string name="style_lubdub">Battement</string>
     <string name="dev_manual">Indicateur manuel (ignore les notifications)</string>
-    <string name="dev_post_notif">Envoyer une notification de test dans 8 s (fermez le téléphone)</string>
+    <string name="dev_post_notif">Envoyer une notification de test dans 8 s</string>
     <string name="arr_row">Rangée</string>
     <string name="shape_rules_title">Règles pour une forme personnalisée</string>
     <string name="arr_shape">Forme</string>
@@ -98,4 +98,5 @@
     <string name="current_shape">Forme actuelle</string>
     <string name="pending_title">En ce moment</string>
     <string name="reset_dot">Réinitialiser le point</string>
+    <string name="dev_post_hint">Touchez, fermez le téléphone et regardez l\'écran externe.</string>
 </resources>

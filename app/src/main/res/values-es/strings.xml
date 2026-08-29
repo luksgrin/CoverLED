@@ -34,7 +34,7 @@
     <string name="dev_log">Registro</string>
     <string name="style_lubdub">Lub-dub</string>
     <string name="dev_manual">Indicador manual (ignora las notificaciones)</string>
-    <string name="dev_post_notif">Enviar notificación de prueba en 8 s (cierra el teléfono)</string>
+    <string name="dev_post_notif">Enviar notificación de prueba en 8 s</string>
     <string name="arr_row">Fila</string>
     <string name="shape_rules_title">Reglas para una forma personalizada</string>
     <string name="arr_shape">Forma</string>
@@ -98,4 +98,5 @@
     <string name="current_shape">Forma actual</string>
     <string name="pending_title">Ahora mismo</string>
     <string name="reset_dot">Restablecer el punto</string>
+    <string name="dev_post_hint">Toca, cierra el teléfono y mira la pantalla exterior.</string>
 </resources>

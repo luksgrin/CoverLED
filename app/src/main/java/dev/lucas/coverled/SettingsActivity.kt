@@ -150,6 +150,7 @@ class SettingsActivity : AppCompatActivity() {
         c.addView(ui.header(getString(R.string.dev_test_title)))
         c.addView(ui.card(LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL; setPadding(ui.dp(16), ui.dp(8), ui.dp(16), ui.dp(16))
+            addView(ui.note(getString(R.string.dev_post_hint)).apply { setPadding(ui.dp(8), ui.dp(8), ui.dp(8), 0) })
             addView(ui.button(getString(R.string.dev_post_notif), true) {
                 log("Close the phone… test notification in 8 s"); handler.postDelayed({ TestNotification.post(this@SettingsActivity, true); log("posted") }, 8_000)
             })
@@ -158,11 +159,9 @@ class SettingsActivity : AppCompatActivity() {
         c.addView(ui.header(getString(R.string.dev_manual)))
         c.addView(ui.card(LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL; setPadding(ui.dp(16), ui.dp(8), ui.dp(16), ui.dp(16))
-            addView(ui.buttonBar(
-                getString(R.string.dev_one_dot) to { show(MainActivity.PALETTE.copyOf(1)) },
-                getString(R.string.dev_three_dots) to { log("Close the phone… 3 dots in 8 s"); handler.postDelayed({ show(MainActivity.PALETTE.copyOf(3)) }, 8_000) },
-                getString(R.string.dev_hide) to { IndicatorController.hide(this@SettingsActivity); log("HIDE sent") },
-            ))
+            addView(ui.button(getString(R.string.dev_one_dot)) { show(MainActivity.PALETTE.copyOf(1)) })
+            addView(ui.button(getString(R.string.dev_three_dots)) { log("Close the phone… 3 dots in 8 s"); handler.postDelayed({ show(MainActivity.PALETTE.copyOf(3)) }, 8_000) })
+            addView(ui.button(getString(R.string.dev_hide)) { IndicatorController.hide(this@SettingsActivity); log("HIDE sent") })
         }))
         val fold = TextView(this).apply { typeface = android.graphics.Typeface.MONOSPACE; textSize = 11f; setTextColor(getColor(R.color.ou_text)) }
         c.addView(ui.header(getString(R.string.dev_device)))
