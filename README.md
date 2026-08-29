@@ -25,6 +25,7 @@ app/src/main/java/dev/lucas/coverled/
   NotificationState.kt        pending notifications per package (SharedPreferences, no content)
   AppColors.kt                package → color (user / learned / icon), ignore list, seen apps
   ColorsActivity.kt           per-app color editor + ignore list
+  PositionActivity.kt         drag-to-place the dot, live preview on the cover
   FoldState.kt                closed/open via TYPE_HINGE_ANGLE
   IndicatorCoordinator.kt     show/hide decision, re-show after screen-off
   IndicatorController.kt      launches/hides the indicator on the cover display
@@ -56,10 +57,14 @@ cached per app; "Auto" in the editor resets them. Apps show up in the editor aft
 notification; tick **Ignore** to keep an app from lighting the LED.
 (Channel light colors are a system-only API, so they can't be read by a third-party listener.)
 
+### Dot position
+**Dot position** opens a scaled outline of the cover screen; drag the dot (or use Center / Top / Bottom).
+While the screen is open a preview dot is shown on the real cover and follows your finger.
+
 ### Power settings (in the app)
-- **Blink** (default on) with **Fade / heartbeat** (default on): the dot breathes in and out over the
-  beat length (default 1.4 s), then stays dark for the gap (default 2.5 s); both adjustable. Turn Fade
-  off for a hard on/off blink. The battery line does not blink.
+- **Blink** (default on) with a **beat style**: *Blink* (hard on/off), *Breathe* (fade in/out, default)
+  or *Lub-dub* (strong pulse, short pause, softer pulse). One beat lasts the beat length (default 1.4 s),
+  then the dot stays dark for the gap (default 2.5 s); both adjustable. The battery line does not blink.
 - **Brightness** (default 5 %): window brightness while the LED is showing.
 Changes apply live to a visible LED. Note the panel itself stays on while a dot is pending — this is
 not Samsung's low-power AOD — so blink + low brightness are what keep the cost down.

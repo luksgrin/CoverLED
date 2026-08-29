@@ -17,6 +17,12 @@ class DotView(context: Context) : View(context) {
     var dotDp = 14f
     var gapDp = 12f
 
+    /** Center of the dot group as fractions of the view size. */
+    var posX = 0.5f
+        set(v) { field = v; invalidate() }
+    var posY = 0.5f
+        set(v) { field = v; invalidate() }
+
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     override fun onDraw(canvas: Canvas) {
@@ -26,9 +32,11 @@ class DotView(context: Context) : View(context) {
         val d = dotDp * density
         val gap = gapDp * density
         val total = colors.size * d + (colors.size - 1) * gap
-        val startX = (width - total) / 2f + d / 2f
-        val cy = height / 2f
         val r = min(d / 2f, width / (colors.size * 2f + 2f))
+        // keep the whole group on screen
+        val cx = (posX * width).coerceIn(total / 2f + r, width - total / 2f - r)
+        val cy = (posY * height).coerceIn(r * 2, height - r * 2)
+        val startX = cx - total / 2f + d / 2f
         colors.forEachIndexed { i, c ->
             paint.color = c
             canvas.drawCircle(startX + i * (d + gap), cy, r, paint)

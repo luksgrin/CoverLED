@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
+import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
@@ -163,10 +164,13 @@ class MainActivity : AppCompatActivity() {
             isChecked = st.blinkEnabled
             setOnCheckedChangeListener { _, v -> st.blinkEnabled = v }
         }
-        findViewById<Switch>(R.id.swFade).apply {
-            isChecked = st.fadeEnabled
-            setOnCheckedChangeListener { _, v -> st.fadeEnabled = v }
+        findViewById<RadioGroup>(R.id.rgStyle).apply {
+            check(when (st.beatStyle) { dev.lucas.coverled.Settings.STYLE_HARD -> R.id.rbHard; dev.lucas.coverled.Settings.STYLE_LUBDUB -> R.id.rbLubdub; else -> R.id.rbBreathe })
+            setOnCheckedChangeListener { _, id ->
+                st.beatStyle = when (id) { R.id.rbHard -> dev.lucas.coverled.Settings.STYLE_HARD; R.id.rbLubdub -> dev.lucas.coverled.Settings.STYLE_LUBDUB; else -> dev.lucas.coverled.Settings.STYLE_BREATHE }
+            }
         }
+        findViewById<Button>(R.id.btnPosition).setOnClickListener { startActivity(Intent(this, PositionActivity::class.java)) }
         findViewById<Switch>(R.id.swBattery).apply {
             isChecked = st.showBattery
             setOnCheckedChangeListener { _, v -> st.showBattery = v }

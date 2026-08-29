@@ -12,10 +12,18 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(KEY_BLINK, true)
         set(v) = prefs.edit().putBoolean(KEY_BLINK, v).apply()
 
-    /** Fade in/out (heartbeat) instead of a hard on/off blink. */
-    var fadeEnabled: Boolean
-        get() = prefs.getBoolean(KEY_FADE, true)
-        set(v) = prefs.edit().putBoolean(KEY_FADE, v).apply()
+    /** How one beat looks: hard on/off, a breath (fade in/out), or a heartbeat (lub-dub). */
+    var beatStyle: String
+        get() = prefs.getString(KEY_STYLE, STYLE_BREATHE) ?: STYLE_BREATHE
+        set(v) = prefs.edit().putString(KEY_STYLE, v).apply()
+
+    /** Dot position on the cover as fractions of width/height (0..1). Default: center. */
+    var dotX: Float
+        get() = prefs.getFloat(KEY_DOT_X, 0.5f)
+        set(v) = prefs.edit().putFloat(KEY_DOT_X, v.coerceIn(0f, 1f)).apply()
+    var dotY: Float
+        get() = prefs.getFloat(KEY_DOT_Y, 0.5f)
+        set(v) = prefs.edit().putFloat(KEY_DOT_Y, v.coerceIn(0f, 1f)).apply()
 
     var blinkOnMs: Int
         get() = prefs.getInt(KEY_BLINK_ON, 1400)
@@ -37,7 +45,12 @@ class Settings(context: Context) {
 
     companion object {
         const val KEY_BLINK = "blink"
-        const val KEY_FADE = "fade"
+        const val KEY_STYLE = "beat_style"
+        const val KEY_DOT_X = "dot_x"
+        const val KEY_DOT_Y = "dot_y"
+        const val STYLE_HARD = "hard"
+        const val STYLE_BREATHE = "breathe"
+        const val STYLE_LUBDUB = "lubdub"
         const val KEY_BLINK_ON = "blink_on_ms"
         const val KEY_BLINK_OFF = "blink_off_ms"
         const val KEY_BRIGHTNESS = "brightness"

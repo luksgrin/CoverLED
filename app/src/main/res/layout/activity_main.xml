@@ -90,11 +90,21 @@
             android:layout_height="wrap_content"
             android:text="Blink (saves battery)" />
 
-        <Switch
-            android:id="@+id/swFade"
+        <RadioGroup
+            android:id="@+id/rgStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fade in/out (heartbeat) instead of hard blink" />
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbHard" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Blink" />
+            <RadioButton android:id="@+id/rbBreathe" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Breathe" />
+            <RadioButton android:id="@+id/rbLubdub" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Lub-dub" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/btnPosition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dot position" />
 
         <TextView
             android:id="@+id/lblBlinkOn"

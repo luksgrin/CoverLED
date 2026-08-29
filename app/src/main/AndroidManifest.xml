@@ -27,6 +27,11 @@
         </activity>
 
         <activity
+            android:name=".PositionActivity"
+            android:exported="false"
+            android:label="Dot position" />
+
+        <activity
             android:name=".ColorsActivity"
             android:exported="false"
             android:label="App colors" />

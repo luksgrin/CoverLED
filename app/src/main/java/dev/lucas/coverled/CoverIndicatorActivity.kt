@@ -21,6 +21,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -58,22 +59,32 @@ class CoverIndicatorActivity : AppCompatActivity() {
         override fun run() {
             val on = settings.blinkOnMs.toLong()
             beat?.cancel()
-            if (settings.fadeEnabled) {
-                val up = ObjectAnimator.ofFloat(dots, View.ALPHA, 0f, 1f).apply {
-                    duration = on * 45 / 100; interpolator = DecelerateInterpolator()
+            when (settings.beatStyle) {
+                Settings.STYLE_LUBDUB -> {
+                    // lub (strong) – short pause – dub (softer), all within the beat length
+                    val lubUp = alpha(0f, 1f, on * 15 / 100, DecelerateInterpolator())
+                    val lubDown = alpha(1f, 0.15f, on * 20 / 100, AccelerateInterpolator())
+                    val pause = alpha(0.15f, 0.15f, on * 10 / 100, null)
+                    val dubUp = alpha(0.15f, 0.8f, on * 15 / 100, DecelerateInterpolator())
+                    val dubDown = alpha(0.8f, 0f, on * 40 / 100, AccelerateInterpolator())
+                    beat = AnimatorSet().apply { playSequentially(lubUp, lubDown, pause, dubUp, dubDown); start() }
                 }
-                val down = ObjectAnimator.ofFloat(dots, View.ALPHA, 1f, 0f).apply {
-                    duration = on * 55 / 100; interpolator = AccelerateInterpolator()
+                Settings.STYLE_BREATHE -> {
+                    val up = alpha(0f, 1f, on * 45 / 100, DecelerateInterpolator())
+                    val down = alpha(1f, 0f, on * 55 / 100, AccelerateInterpolator())
+                    beat = AnimatorSet().apply { playSequentially(up, down); start() }
                 }
-                beat = AnimatorSet().apply { playSequentially(up, down); start() }
-                handler.postDelayed(this, on + settings.blinkOffMs)
-            } else {
-                dots.alpha = 1f
-                handler.postDelayed({ dots.alpha = 0f }, on)
-                handler.postDelayed(this, on + settings.blinkOffMs)
+                else -> {
+                    dots.alpha = 1f
+                    handler.postDelayed({ dots.alpha = 0f }, on)
+                }
             }
+            handler.postDelayed(this, on + settings.blinkOffMs)
         }
     }
+
+    private fun alpha(from: Float, to: Float, ms: Long, interp: android.view.animation.Interpolator?) =
+        ObjectAnimator.ofFloat(dots, View.ALPHA, from, to).apply { duration = ms; interpolator = interp ?: LinearInterpolator() }
 
     private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> applySettings() }
 
@@ -157,6 +168,8 @@ class CoverIndicatorActivity : AppCompatActivity() {
 
     private fun applySettings() {
         window.attributes = window.attributes.apply { screenBrightness = settings.brightness }
+        dots.posX = settings.dotX
+        dots.posY = settings.dotY
         handler.removeCallbacksAndMessages(null)
         beat?.cancel()
         dots.visibility = View.VISIBLE
