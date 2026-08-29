@@ -86,3 +86,11 @@ Same APK as built for the Flip5, no code changes needed for the core path.
 | Launch from listener, phone closed + locked | ✅ BAL reason now reported as `BAL_ALLOW_SAW_PERMISSION` (8.5 wording; Flip5/8.0 said `BAL_ALLOW_VISIBLE_WINDOW`) |
 | Dot + charging line rendered | ✅ |
 | Camera cutout | Cameras are **inside** the cover panel: cutout bounds `(428,828)–(948,1048)`, bottom inset 220 px. The charging line overlapped it → indicator now pads by the display-cutout insets (also helps Flip5, whose cutout is 66 px bottom-right). |
+
+---
+
+# Re-check on Flip5 after the Flip7 work — 2026-08-30
+Latest build (One UI interface, automatic charging-line default, translations) installed over the
+existing one: grants persisted, listener rebound by itself, dot + charging line rendered on the closed
+cover. Charging line default landed at y≈605 of 720, above the 66 px cutout (starts at 654). Spanish
+strings shown ("carga completa").
