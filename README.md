@@ -26,6 +26,7 @@ app/src/main/java/dev/lucas/coverled/
   AppColors.kt                package → color (user / learned / icon), ignore list, seen apps
   ColorsActivity.kt           per-app color editor + ignore list
   PositionActivity.kt         drag-to-place the dot, live preview on the cover
+  ShapeLoader.kt              validates/imports the custom PNG shape
   FoldState.kt                closed/open via TYPE_HINGE_ANGLE
   IndicatorCoordinator.kt     show/hide decision, re-show after screen-off
   IndicatorController.kt      launches/hides the indicator on the cover display
@@ -40,7 +41,7 @@ app/src/main/java/dev/lucas/coverled/
 
 | You do… | The LED… |
 |---|---|
-| get a notification while the phone is closed | shows a dot in that app's color (up to 4 apps) |
+| get a notification while the phone is closed | shows a dot in that app's color (up to 6 apps; a white 6th dot means "more") |
 | dismiss / read the notification (phone open or from the cover) | disappears |
 | **tap the dot** | hides and reveals Samsung's cover screen / notifications |
 | **press the side key while the dot is dark → screen wakes** | hides — you wanted the screen, read your notifications |
@@ -56,6 +57,19 @@ the notification's accent color → dominant/vibrant color of the app icon → o
 cached per app; "Auto" in the editor resets them. Apps show up in the editor after their first
 notification; tick **Ignore** to keep an app from lighting the LED.
 (Channel light colors are a system-only API, so they can't be read by a third-party listener.)
+
+### Several apps
+Up to **6** dots. Arrangement is *Row* or *Geometric* (2 = pair, 3 = triangle, 4 = square, 5 = pentagon,
+6 = hexagon). Dots are ordered **priority apps first** (tick *Priority* in the App colors screen), then by
+the order in which apps started notifying. With more than 6 apps pending, the last dot is **white** and
+stands for "others". **Dot size** slider: 8–64 dp.
+
+### Custom shape (PNG)
+*Load shape PNG…* replaces the circle with your own drawing, tinted with each app's color. Rules:
+- PNG with a **transparent background** — that's what defines the shape;
+- draw in **white** (gray = dimmer; color in the file is multiplied with the app color, so keep it white);
+- at most **1024×1024 px** and **2 MB**; a square canvas works best (it's fitted into a square);
+- stored downscaled to 128×128 in the app's private storage; *Use circles* removes it.
 
 ### Dot position
 **Dot position** opens a scaled outline of the cover screen; drag the dot (or use Center / Top / Bottom).

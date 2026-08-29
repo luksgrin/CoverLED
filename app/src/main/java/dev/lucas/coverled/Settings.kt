@@ -17,6 +17,21 @@ class Settings(context: Context) {
         get() = prefs.getString(KEY_STYLE, STYLE_BREATHE) ?: STYLE_BREATHE
         set(v) = prefs.edit().putString(KEY_STYLE, v).apply()
 
+    /** Row (side by side) or Geometric (triangle / square / pentagon / hexagon). */
+    var arrangement: String
+        get() = prefs.getString(KEY_ARRANGEMENT, ARR_GEOMETRIC) ?: ARR_GEOMETRIC
+        set(v) = prefs.edit().putString(KEY_ARRANGEMENT, v).apply()
+
+    /** Dot (or custom shape) size in dp. */
+    var dotSizeDp: Int
+        get() = prefs.getInt(KEY_DOT_SIZE, 14)
+        set(v) = prefs.edit().putInt(KEY_DOT_SIZE, v.coerceIn(8, 64)).apply()
+
+    /** Whether a user-provided PNG shape is used instead of a circle (file lives at [shapeFile]). */
+    var customShape: Boolean
+        get() = prefs.getBoolean(KEY_CUSTOM_SHAPE, false)
+        set(v) = prefs.edit().putBoolean(KEY_CUSTOM_SHAPE, v).apply()
+
     /** Dot position on the cover as fractions of width/height (0..1). Default: center. */
     var dotX: Float
         get() = prefs.getFloat(KEY_DOT_X, 0.5f)
@@ -48,6 +63,18 @@ class Settings(context: Context) {
         const val KEY_STYLE = "beat_style"
         const val KEY_DOT_X = "dot_x"
         const val KEY_DOT_Y = "dot_y"
+        const val KEY_ARRANGEMENT = "arrangement"
+        const val KEY_DOT_SIZE = "dot_size_dp"
+        const val KEY_CUSTOM_SHAPE = "custom_shape"
+        const val ARR_ROW = "row"
+        const val ARR_GEOMETRIC = "geometric"
+        const val MAX_DOTS = 6
+        const val SHAPE_FILE = "shape.png"
+        /** Custom shape constraints (see README): PNG, transparent background, white/grayscale drawing. */
+        const val SHAPE_MAX_INPUT_PX = 1024
+        const val SHAPE_MAX_INPUT_BYTES = 2L * 1024 * 1024
+        const val SHAPE_STORED_PX = 128
+        fun shapeFile(context: android.content.Context) = java.io.File(context.filesDir, SHAPE_FILE)
         const val STYLE_HARD = "hard"
         const val STYLE_BREATHE = "breathe"
         const val STYLE_LUBDUB = "lubdub"

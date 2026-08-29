@@ -16,6 +16,7 @@ import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -39,11 +40,28 @@ class MainActivity : AppCompatActivity() {
         private const val CHANNEL = "test"
         private const val TEST_ID = 4242
         val PALETTE = intArrayOf(
-            Color.rgb(33, 150, 243), Color.rgb(76, 175, 80), Color.rgb(156, 39, 176), Color.rgb(244, 67, 54)
+            Color.rgb(33, 150, 243), Color.rgb(76, 175, 80), Color.rgb(156, 39, 176),
+            Color.rgb(244, 67, 54), Color.rgb(255, 235, 59), Color.WHITE
         )
     }
 
     private lateinit var txtLog: TextView
+
+    private val pickShape = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri == null) return@registerForActivityResult
+        val err = ShapeLoader.import(this, uri)
+        if (err == null) { dev.lucas.coverled.Settings(this).customShape = true; log("custom shape loaded") }
+        else log("shape rejected: $err")
+        refreshShapeText()
+    }
+
+    private fun refreshShapeText() {
+        val st = dev.lucas.coverled.Settings(this)
+        findViewById<TextView>(R.id.txtShape).text =
+            if (st.customShape && dev.lucas.coverled.Settings.shapeFile(this).exists()) "Shape: custom PNG (tinted per app)"
+            else "Shape: circle. Custom PNG rules: transparent background, white drawing (gray = dimmer), " +
+                "≤ ${dev.lucas.coverled.Settings.SHAPE_MAX_INPUT_PX} px per side, ≤ 2 MB, square works best."
+    }
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -170,6 +188,24 @@ class MainActivity : AppCompatActivity() {
                 st.beatStyle = when (id) { R.id.rbHard -> dev.lucas.coverled.Settings.STYLE_HARD; R.id.rbLubdub -> dev.lucas.coverled.Settings.STYLE_LUBDUB; else -> dev.lucas.coverled.Settings.STYLE_BREATHE }
             }
         }
+        findViewById<RadioGroup>(R.id.rgArrangement).apply {
+            check(if (st.arrangement == dev.lucas.coverled.Settings.ARR_ROW) R.id.rbRow else R.id.rbGeometric)
+            setOnCheckedChangeListener { _, id ->
+                st.arrangement = if (id == R.id.rbRow) dev.lucas.coverled.Settings.ARR_ROW else dev.lucas.coverled.Settings.ARR_GEOMETRIC
+            }
+        }
+        val lblSize = findViewById<TextView>(R.id.lblSize)
+        findViewById<SeekBar>(R.id.sbSize).apply {
+            progress = st.dotSizeDp - 8
+            lblSize.text = "Dot size: ${st.dotSizeDp} dp"
+            setOnSeekBarChangeListener(onChange { p -> st.dotSizeDp = 8 + p; lblSize.text = "Dot size: ${st.dotSizeDp} dp" })
+        }
+        findViewById<Button>(R.id.btnShape).setOnClickListener { pickShape.launch(arrayOf("image/png")) }
+        findViewById<Button>(R.id.btnShapeClear).setOnClickListener {
+            ShapeLoader.clear(this); st.customShape = false; refreshShapeText(); log("back to circles")
+        }
+        refreshShapeText()
+
         findViewById<Button>(R.id.btnPosition).setOnClickListener { startActivity(Intent(this, PositionActivity::class.java)) }
         findViewById<Switch>(R.id.swBattery).apply {
             isChecked = st.showBattery

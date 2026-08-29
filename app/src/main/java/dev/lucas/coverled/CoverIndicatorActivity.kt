@@ -170,6 +170,9 @@ class CoverIndicatorActivity : AppCompatActivity() {
         window.attributes = window.attributes.apply { screenBrightness = settings.brightness }
         dots.posX = settings.dotX
         dots.posY = settings.dotY
+        dots.dotDp = settings.dotSizeDp.toFloat()
+        dots.geometric = settings.arrangement == Settings.ARR_GEOMETRIC
+        dots.shape = if (settings.customShape) ShapeLoader.load(this) else null
         handler.removeCallbacksAndMessages(null)
         beat?.cancel()
         dots.visibility = View.VISIBLE

@@ -112,13 +112,24 @@ class IndicatorCoordinator(private val context: Context) {
             IndicatorController.hide(context)
             return
         }
-        lastColors = snap.keys
-            .sortedBy { colors.priorityOf(it) }
-            .map { colors.colorFor(it) }
-            .distinct()
-            .take(MAX_DOTS)
-            .toIntArray()
+        lastColors = dotsFor(snap.keys)
         if (!snoozed) launch()
+    }
+
+    /**
+     * Which dots to show: priority apps first, then by order of first appearance. If more than
+     * MAX_DOTS apps are pending, the last dot is white and stands for "others".
+     */
+    private fun dotsFor(pkgs: Set<String>): IntArray {
+        val seen = state.firstSeenOrder()
+        val ordered = pkgs.sortedWith(
+            compareByDescending<String> { colors.isPriority(it) }
+                .thenBy { seen[it] ?: Long.MAX_VALUE }
+                .thenBy { colors.priorityOf(it) }
+        )
+        val max = Settings.MAX_DOTS
+        return if (ordered.size <= max) ordered.map { colors.colorFor(it) }.toIntArray()
+        else (ordered.take(max - 1).map { colors.colorFor(it) } + AppColors.OTHERS_COLOR).toIntArray()
     }
 
     private fun launch() {
@@ -132,6 +143,5 @@ class IndicatorCoordinator(private val context: Context) {
         private const val RESHOW_DELAY_MS = 2_000L
         /** SCREEN_ON arriving within this window after our own launch is our turnScreenOn, not the user. */
         private const val OWN_WAKE_WINDOW_MS = 2_500L
-        private const val MAX_DOTS = 4
     }
 }

@@ -84,6 +84,14 @@ class AppColors(private val context: Context) {
         meta.edit().putStringSet(KEY_IGNORED, set).apply()
     }
 
+    /** Priority apps always get one of the dots, ahead of everything else. */
+    fun isPriority(pkg: String) = meta.getStringSet(KEY_PRIORITY, emptySet())!!.contains(pkg)
+    fun setPriority(pkg: String, on: Boolean) {
+        val set = meta.getStringSet(KEY_PRIORITY, emptySet())!!.toMutableSet()
+        if (on) set.add(pkg) else set.remove(pkg)
+        meta.edit().putStringSet(KEY_PRIORITY, set).apply()
+    }
+
     /** Packages that have ever posted a notification while we were listening (for the editor). */
     fun seen(): Set<String> = meta.getStringSet(KEY_SEEN, emptySet())!!
     fun markSeen(pkg: String) {
@@ -102,6 +110,9 @@ class AppColors(private val context: Context) {
         private const val TAG = "CoverLED"
         private const val KEY_IGNORED = "ignored"
         private const val KEY_SEEN = "seen"
+        private const val KEY_PRIORITY = "priority"
+        /** The 6th dot when more than MAX_DOTS apps are pending. */
+        val OTHERS_COLOR = Color.WHITE
         val DEFAULT_COLOR = Color.rgb(255, 152, 0)   // orange: "something else"
 
         /** Choices offered in the editor (name → color). */

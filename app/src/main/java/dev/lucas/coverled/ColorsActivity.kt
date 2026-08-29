@@ -32,7 +32,8 @@ class ColorsActivity : AppCompatActivity() {
         val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(TextView(this).apply {
             text = "Apps appear here after their first notification. Tap a color to change it; " +
-                "Auto uses the color the app declares for its LED, else its accent, else its icon."
+                "Auto uses the color the app declares for its LED, else its accent, else its icon. " +
+                "Priority apps always get a dot (max ${Settings.MAX_DOTS}; a white dot means \"more\")."
             setPadding(dp(16), dp(12), dp(16), dp(8))
         })
         adapter = Adapter()
@@ -88,7 +89,11 @@ class ColorsActivity : AppCompatActivity() {
                     addView(TextView(context).apply { tag = "sub"; textSize = 12f })
                 }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
                 addView(ImageView(context).apply { tag = "swatch"; setPadding(dp(8), dp(8), dp(8), dp(8)) })
-                addView(CheckBox(context).apply { tag = "ignore"; text = "Ignore" })
+                addView(LinearLayout(context).apply {
+                    orientation = LinearLayout.VERTICAL
+                    addView(CheckBox(context).apply { tag = "priority"; text = "Priority" })
+                    addView(CheckBox(context).apply { tag = "ignore"; text = "Ignore" })
+                })
             }
             row.findViewWithTag<ImageView>("icon").setImageDrawable(
                 runCatching { packageManager.getApplicationIcon(pkg) }.getOrNull()
@@ -100,6 +105,12 @@ class ColorsActivity : AppCompatActivity() {
                 setImageDrawable(swatch(colors.colorFor(pkg)))
                 alpha = if (ignored) 0.3f else 1f
                 setOnClickListener { pickColor(pkg) }
+            }
+            row.findViewWithTag<CheckBox>("priority").apply {
+                setOnCheckedChangeListener(null)
+                isChecked = colors.isPriority(pkg)
+                isEnabled = !ignored
+                setOnCheckedChangeListener { _, v -> colors.setPriority(pkg, v) }
             }
             row.findViewWithTag<CheckBox>("ignore").apply {
                 setOnCheckedChangeListener(null)

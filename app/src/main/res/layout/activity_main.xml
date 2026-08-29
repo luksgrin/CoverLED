@@ -100,6 +100,48 @@
             <RadioButton android:id="@+id/rbLubdub" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Lub-dub" />
         </RadioGroup>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Several apps: arrangement" />
+
+        <RadioGroup
+            android:id="@+id/rgArrangement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbRow" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Row" />
+            <RadioButton android:id="@+id/rbGeometric" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Triangle / square / …" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/lblSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dot size" />
+
+        <SeekBar
+            android:id="@+id/sbSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="56" />
+
+        <TextView
+            android:id="@+id/txtShape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button android:id="@+id/btnShape" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Load shape PNG…" />
+            <Button android:id="@+id/btnShapeClear" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Use circles" />
+        </LinearLayout>
+
         <Button
             android:id="@+id/btnPosition"
             android:layout_width="match_parent"
