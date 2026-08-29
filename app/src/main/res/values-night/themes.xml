@@ -12,16 +12,6 @@
         <item name="android:windowBackground">@color/ou_bg</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
-    </style>
-
-    <!-- Pure black, no system bars: only the dot pixels emit light on the cover OLED. -->
-    <style name="Theme.CoverLED.Indicator" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowBackground">@android:color/black</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowAnimationStyle">@null</item>
-        <item name="android:statusBarColor">@android:color/black</item>
-        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

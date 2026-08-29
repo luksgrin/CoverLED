@@ -8,7 +8,6 @@ import android.graphics.RectF
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -29,26 +28,21 @@ class PositionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         settings = Settings(this)
 
-        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), 0, dp(16), dp(16)); applySystemInsetsPadding(top = true) }
-        root.addView(com.google.android.material.appbar.MaterialToolbar(this).apply {
-            title = getString(R.string.cat_position)
-            setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
-            setNavigationOnClickListener { finish() }
-        }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { leftMargin = -dp(16); rightMargin = -dp(16) })
-        root.addView(TextView(this).apply { text = getString(R.string.position_intro) })
+        val ui = OneUi(this)
+        val (page, content) = ui.page(getString(R.string.cat_position), showBack = true) { finish() }
+        content.addView(ui.note(getString(R.string.position_intro)))
         preview = CoverPreview(this)
-        root.addView(preview, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { topMargin = dp(16); bottomMargin = dp(16) })
-        val buttons = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        fun btn(label: Int, action: () -> Unit) = buttons.addView(
-            Button(this).apply { text = getString(label); setOnClickListener { action() } },
-            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-        )
-        btn(R.string.position_center) { preview.setDot(0.5f, 0.5f) }
-        btn(R.string.position_top) { preview.setDot(0.5f, 0.15f) }
-        btn(R.string.position_bottom) { preview.setDot(0.5f, 0.8f) }
-        btn(R.string.position_reset_battery) { preview.resetBattery() }
-        root.addView(buttons)
-        setContentView(root)
+        content.addView(ui.card(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(16), dp(16), dp(16))
+            addView(preview, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(360)))
+            addView(ui.buttonBar(
+                getString(R.string.position_center) to { preview.setDot(0.5f, 0.5f) },
+                getString(R.string.position_top) to { preview.setDot(0.5f, 0.15f) },
+                getString(R.string.position_bottom) to { preview.setDot(0.5f, 0.8f) },
+            ))
+            addView(ui.button(getString(R.string.position_reset_battery)) { preview.resetBattery() })
+        }))
+        OneUi.setContent(this, page)
     }
 
     override fun onStart() {

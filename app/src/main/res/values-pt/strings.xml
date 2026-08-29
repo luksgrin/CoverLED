@@ -88,4 +88,14 @@
     <string name="color_orange">Laranja</string>
     <string name="color_white">Branco</string>
     <string name="position_reset_battery">Repor linha de carregamento</string>
+    <string name="style_blink_help">Ligado/desligado seco</string>
+    <string name="style_breathe_help">Acende e apaga suavemente</string>
+    <string name="style_lubdub_help">Dois pulsos, como um coração</string>
+    <string name="timing">Tempos</string>
+    <string name="display">Ecrã</string>
+    <string name="arrangement">Disposição</string>
+    <string name="size">Tamanho</string>
+    <string name="current_shape">Forma atual</string>
+    <string name="pending_title">Neste momento</string>
+    <string name="reset_dot">Repor ponto</string>
 </resources>

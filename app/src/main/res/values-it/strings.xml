@@ -88,4 +88,14 @@
     <string name="color_orange">Arancione</string>
     <string name="color_white">Bianco</string>
     <string name="position_reset_battery">Ripristina riga di ricarica</string>
+    <string name="style_blink_help">Acceso/spento netto</string>
+    <string name="style_breathe_help">Si accende e si spegne gradualmente</string>
+    <string name="style_lubdub_help">Due pulsazioni, come un battito</string>
+    <string name="timing">Tempi</string>
+    <string name="display">Schermo</string>
+    <string name="arrangement">Disposizione</string>
+    <string name="size">Dimensione</string>
+    <string name="current_shape">Forma attuale</string>
+    <string name="pending_title">Adesso</string>
+    <string name="reset_dot">Ripristina punto</string>
 </resources>

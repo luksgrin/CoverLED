@@ -94,4 +94,14 @@
     <string name="color_orange">Orange</string>
     <string name="color_white">White</string>
     <string name="position_reset_battery">Reset charging line</string>
+    <string name="style_blink_help">Hard on/off</string>
+    <string name="style_breathe_help">Fades in and out</string>
+    <string name="style_lubdub_help">Two pulses, like a heartbeat</string>
+    <string name="timing">Timing</string>
+    <string name="display">Display</string>
+    <string name="arrangement">Arrangement</string>
+    <string name="size">Size</string>
+    <string name="current_shape">Current shape</string>
+    <string name="pending_title">Right now</string>
+    <string name="reset_dot">Reset dot</string>
 </resources>

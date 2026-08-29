@@ -88,4 +88,14 @@
     <string name="color_orange">Orange</string>
     <string name="color_white">Blanc</string>
     <string name="position_reset_battery">Réinitialiser la ligne de charge</string>
+    <string name="style_blink_help">Allumé/éteint net</string>
+    <string name="style_breathe_help">S\'allume et s\'éteint en douceur</string>
+    <string name="style_lubdub_help">Deux pulsations, comme un cœur</string>
+    <string name="timing">Durées</string>
+    <string name="display">Affichage</string>
+    <string name="arrangement">Disposition</string>
+    <string name="size">Taille</string>
+    <string name="current_shape">Forme actuelle</string>
+    <string name="pending_title">En ce moment</string>
+    <string name="reset_dot">Réinitialiser le point</string>
 </resources>

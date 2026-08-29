@@ -88,4 +88,14 @@
     <string name="color_orange">オレンジ</string>
     <string name="color_white">白</string>
     <string name="position_reset_battery">充電表示をリセット</string>
+    <string name="style_blink_help">くっきり点灯・消灯</string>
+    <string name="style_breathe_help">ゆっくり明滅</string>
+    <string name="style_lubdub_help">心臓のように2回脈打つ</string>
+    <string name="timing">タイミング</string>
+    <string name="display">表示</string>
+    <string name="arrangement">配置</string>
+    <string name="size">サイズ</string>
+    <string name="current_shape">現在の形</string>
+    <string name="pending_title">現在</string>
+    <string name="reset_dot">点をリセット</string>
 </resources>

@@ -1,3 +1,12 @@
 <resources>
-    <color name="accent">#FF9800</color>
+    <!-- One UI-like palette -->
+    <color name="ou_bg">#F6F6F6</color>
+    <color name="ou_card">#FFFFFF</color>
+    <color name="ou_text">#010101</color>
+    <color name="ou_text_secondary">#8C8C8C</color>
+    <color name="ou_divider">#E5E5E5</color>
+    <color name="ou_accent">#3E91FF</color>
+    <color name="ou_accent_container">#E3EEFF</color>
+    <color name="ou_button">#EDEDED</color>
+    <color name="accent">#3E91FF</color>
 </resources>

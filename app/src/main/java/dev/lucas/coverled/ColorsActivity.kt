@@ -10,7 +10,6 @@ import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,25 +22,20 @@ class ColorsActivity : AppCompatActivity() {
 
     private lateinit var colors: AppColors
     private lateinit var adapter: Adapter
+    private lateinit var listCard: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         colors = AppColors(this)
         title = "App colors & ignore list"
 
-        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; applySystemInsetsPadding(top = true) }
-        root.addView(com.google.android.material.appbar.MaterialToolbar(this).apply {
-            title = getString(R.string.cat_apps)
-            setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
-            setNavigationOnClickListener { finish() }
-        })
-        root.addView(TextView(this).apply {
-            text = getString(R.string.colors_intro, Settings.MAX_DOTS)
-            setPadding(dp(16), dp(12), dp(16), dp(8))
-        })
+        val ui = OneUi(this)
+        val (page, content) = ui.page(getString(R.string.cat_apps), showBack = true) { finish() }
+        content.addView(ui.note(getString(R.string.colors_intro, Settings.MAX_DOTS)))
         adapter = Adapter()
-        root.addView(ListView(this).apply { this.adapter = this@ColorsActivity.adapter })
-        setContentView(root)
+        listCard = ui.card()
+        content.addView(listCard)
+        OneUi.setContent(this, page)
     }
 
     override fun onResume() { super.onResume(); adapter.reload() }
@@ -77,6 +71,13 @@ class ColorsActivity : AppCompatActivity() {
         fun reload() {
             pkgs = colors.seen().sortedBy { colors.label(it).lowercase() }
             notifyDataSetChanged()
+            listCard.removeAllViews()
+            val ui = OneUi(this@ColorsActivity)
+            pkgs.forEachIndexed { i, _ ->
+                if (i > 0) listCard.addView(View(this@ColorsActivity).apply { setBackgroundColor(getColor(R.color.ou_divider)) },
+                    LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ui.dp(1)).apply { leftMargin = ui.dp(24); rightMargin = ui.dp(24) })
+                listCard.addView(getView(i, null, listCard))
+            }
         }
 
         override fun getCount() = pkgs.size
@@ -88,7 +89,7 @@ class ColorsActivity : AppCompatActivity() {
             val row = (convert as? LinearLayout) ?: LinearLayout(this@ColorsActivity).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
-                setPadding(dp(16), dp(8), dp(16), dp(8))
+                setPadding(dp(24), dp(12), dp(16), dp(12))
                 addView(ImageView(context).apply { tag = "icon" }, LinearLayout.LayoutParams(dp(40), dp(40)))
                 addView(LinearLayout(context).apply {
                     orientation = LinearLayout.VERTICAL

@@ -88,4 +88,14 @@
     <string name="color_orange">Orange</string>
     <string name="color_white">Weiß</string>
     <string name="position_reset_battery">Ladezeile zurücksetzen</string>
+    <string name="style_blink_help">Hartes Ein/Aus</string>
+    <string name="style_breathe_help">Sanftes Ein- und Ausblenden</string>
+    <string name="style_lubdub_help">Zwei Pulse wie ein Herzschlag</string>
+    <string name="timing">Zeiten</string>
+    <string name="display">Anzeige</string>
+    <string name="arrangement">Anordnung</string>
+    <string name="size">Größe</string>
+    <string name="current_shape">Aktuelle Form</string>
+    <string name="pending_title">Gerade jetzt</string>
+    <string name="reset_dot">Punkt zurücksetzen</string>
 </resources>

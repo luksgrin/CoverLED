@@ -1,0 +1,11 @@
+<resources>
+    <color name="ou_bg">#010101</color>
+    <color name="ou_card">#171717</color>
+    <color name="ou_text">#FAFAFA</color>
+    <color name="ou_text_secondary">#8F8F8F</color>
+    <color name="ou_divider">#2A2A2A</color>
+    <color name="ou_accent">#3E91FF</color>
+    <color name="ou_accent_container">#1B2A44</color>
+    <color name="ou_button">#252525</color>
+    <color name="accent">#3E91FF</color>
+</resources>

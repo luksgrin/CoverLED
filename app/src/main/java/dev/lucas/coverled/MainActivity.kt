@@ -6,7 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
@@ -29,43 +29,51 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private lateinit var ui: OneUi
+    private lateinit var content: LinearLayout
+    private lateinit var setupCard: View
+    private lateinit var pendingText: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        findViewById<View>(R.id.content).applySystemInsetsPadding()
         handleDebugIntent(intent)
+        ui = OneUi(this)
+        val (page, c) = ui.page(getString(R.string.app_name), showBack = false)
+        content = c
+        content.addView(ui.note(getString(R.string.home_tagline)))
 
-        findViewById<Button>(R.id.btnAccess).setOnClickListener { startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
-        findViewById<Button>(R.id.btnOverlay).setOnClickListener {
-            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
-        }
+        setupCard = ui.card(); content.addView(setupCard)   // filled in onResume
 
-        category(R.id.catBeat, "💓", R.string.cat_beat, R.string.cat_beat_sub) { startActivity(SettingsActivity.intent(this, SettingsActivity.SECTION_BEAT)) }
-        category(R.id.catLayout, "⬡", R.string.cat_layout, R.string.cat_layout_sub) { startActivity(SettingsActivity.intent(this, SettingsActivity.SECTION_LAYOUT)) }
-        category(R.id.catShape, "★", R.string.cat_shape, R.string.cat_shape_sub) { startActivity(SettingsActivity.intent(this, SettingsActivity.SECTION_SHAPE)) }
-        category(R.id.catApps, "🎨", R.string.cat_apps, R.string.cat_apps_sub) { startActivity(Intent(this, ColorsActivity::class.java)) }
-        category(R.id.catPosition, "⌖", R.string.cat_position, R.string.cat_position_sub) { startActivity(Intent(this, PositionActivity::class.java)) }
-        category(R.id.catDev, "🛠", R.string.cat_dev, R.string.cat_dev_sub) { startActivity(SettingsActivity.intent(this, SettingsActivity.SECTION_DEV)) }
+        pendingText = ui.note("").apply { setPadding(ui.dp(24), ui.dp(16), ui.dp(24), ui.dp(16)) }
+        content.addView(ui.header(getString(R.string.pending_title)))
+        content.addView(ui.card(pendingText))
+
+        content.addView(ui.card(
+            ui.row(getString(R.string.cat_beat), getString(R.string.cat_beat_sub), ui.chevron()) { open(SettingsActivity.SECTION_BEAT) },
+            ui.row(getString(R.string.cat_layout), getString(R.string.cat_layout_sub), ui.chevron()) { open(SettingsActivity.SECTION_LAYOUT) },
+            ui.row(getString(R.string.cat_shape), getString(R.string.cat_shape_sub), ui.chevron()) { open(SettingsActivity.SECTION_SHAPE) },
+            ui.row(getString(R.string.cat_position), getString(R.string.cat_position_sub), ui.chevron()) { startActivity(Intent(this, PositionActivity::class.java)) },
+        ))
+        content.addView(ui.card(
+            ui.row(getString(R.string.cat_apps), getString(R.string.cat_apps_sub), ui.chevron()) { startActivity(Intent(this, ColorsActivity::class.java)) },
+        ))
+        content.addView(ui.card(
+            ui.row(getString(R.string.cat_dev), getString(R.string.cat_dev_sub), ui.chevron()) { open(SettingsActivity.SECTION_DEV) },
+        ))
+        OneUi.setContent(this, page)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 NotificationState.get(this@MainActivity).snapshot.collect { snap ->
                     val colors = AppColors(this@MainActivity)
-                    findViewById<TextView>(R.id.txtState).text =
-                        if (snap.isEmpty()) getString(R.string.pending_none)
-                        else getString(R.string.pending_list, snap.keys.joinToString { colors.label(it) })
+                    pendingText.text = if (snap.isEmpty()) getString(R.string.pending_none)
+                    else getString(R.string.pending_list, snap.keys.joinToString { colors.label(it) })
                 }
             }
         }
     }
 
-    private fun category(id: Int, emoji: String, title: Int, subtitle: Int, onClick: () -> Unit) {
-        val v = findViewById<View>(id)
-        v.findViewById<TextView>(R.id.emoji).text = emoji
-        v.findViewById<TextView>(R.id.title).setText(title)
-        v.findViewById<TextView>(R.id.subtitle).setText(subtitle)
-        v.setOnClickListener { onClick() }
-    }
+    private fun open(section: String) = startActivity(SettingsActivity.intent(this, section))
 
     override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); handleDebugIntent(intent) }
 
@@ -82,9 +90,14 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         val notif = NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
         val overlay = Settings.canDrawOverlays(this)
-        findViewById<TextView>(R.id.txtNotif).text = (if (notif) "✅ " else "⚠️ ") + getString(if (notif) R.string.setup_notif_ok else R.string.setup_notif_missing)
-        findViewById<TextView>(R.id.txtOverlay).text = (if (overlay) "✅ " else "⚠️ ") + getString(if (overlay) R.string.setup_overlay_ok else R.string.setup_overlay_missing)
-        findViewById<View>(R.id.btnAccess).visibility = if (notif) View.GONE else View.VISIBLE
-        findViewById<View>(R.id.btnOverlay).visibility = if (overlay) View.GONE else View.VISIBLE
+        val rows = ArrayList<View>()
+        rows.add(ui.row(getString(if (notif) R.string.setup_notif_ok else R.string.setup_notif_missing), null,
+            if (notif) null else ui.button(getString(R.string.fix), true) { startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }))
+        rows.add(ui.row(getString(if (overlay) R.string.setup_overlay_ok else R.string.setup_overlay_missing), null,
+            if (overlay) null else ui.button(getString(R.string.fix), true) {
+                startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+            }))
+        val idx = content.indexOfChild(setupCard); content.removeView(setupCard)
+        setupCard = ui.card(*rows.toTypedArray()); content.addView(setupCard, idx)
     }
 }

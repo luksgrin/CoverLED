@@ -1,12 +1,14 @@
 package dev.lucas.coverled
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Button
-import android.widget.FrameLayout
+import android.view.Gravity
+import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -15,10 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.button.MaterialButtonToggleGroup
-import com.google.android.material.materialswitch.MaterialSwitch
-import com.google.android.material.slider.Slider
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -39,8 +37,11 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private lateinit var st: Prefs
+    private lateinit var ui: OneUi
     private val handler = Handler(Looper.getMainLooper())
     private var txtLog: TextView? = null
+    private var shapeImage: ImageView? = null
+    private var shapeText: TextView? = null
 
     private val pickShape = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri == null) return@registerForActivityResult
@@ -51,73 +52,89 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        st = Prefs(this)
-        setContentView(R.layout.activity_settings)
-        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
-        toolbar.setNavigationOnClickListener { finish() }
-        val container = findViewById<FrameLayout>(R.id.container)
-        container.applySystemInsetsPadding()
-
-        when (intent.getStringExtra(EXTRA_SECTION)) {
-            SECTION_LAYOUT -> { toolbar.title = getString(R.string.cat_layout); layoutInflater.inflate(R.layout.section_layout, container); bindLayout() }
-            SECTION_SHAPE -> { toolbar.title = getString(R.string.cat_shape); layoutInflater.inflate(R.layout.section_shape, container); bindShape() }
-            SECTION_DEV -> { toolbar.title = getString(R.string.cat_dev); layoutInflater.inflate(R.layout.section_dev, container); bindDev() }
-            else -> { toolbar.title = getString(R.string.cat_beat); layoutInflater.inflate(R.layout.section_beat, container); bindBeat() }
+        st = Prefs(this); ui = OneUi(this)
+        val section = intent.getStringExtra(EXTRA_SECTION) ?: SECTION_BEAT
+        val title = when (section) {
+            SECTION_LAYOUT -> R.string.cat_layout; SECTION_SHAPE -> R.string.cat_shape; SECTION_DEV -> R.string.cat_dev; else -> R.string.cat_beat
         }
+        val (page, content) = ui.page(getString(title), showBack = true) { finish() }
+        when (section) {
+            SECTION_LAYOUT -> buildLayout(content)
+            SECTION_SHAPE -> buildShape(content)
+            SECTION_DEV -> buildDev(content)
+            else -> buildBeat(content)
+        }
+        OneUi.setContent(this, page)
     }
 
     // ---------------------------------------------------------------- beat & brightness
-    private fun bindBeat() {
-        findViewById<MaterialSwitch>(R.id.swBlink).apply {
-            isChecked = st.blinkEnabled; setOnCheckedChangeListener { _, v -> st.blinkEnabled = v }
-        }
-        findViewById<MaterialSwitch>(R.id.swBattery).apply {
-            isChecked = st.showBattery; setOnCheckedChangeListener { _, v -> st.showBattery = v }
-        }
-        findViewById<MaterialButtonToggleGroup>(R.id.tgStyle).apply {
-            check(when (st.beatStyle) { Prefs.STYLE_HARD -> R.id.rbHard; Prefs.STYLE_LUBDUB -> R.id.rbLubdub; else -> R.id.rbBreathe })
-            addOnButtonCheckedListener { _, id, checked ->
-                if (checked) st.beatStyle = when (id) { R.id.rbHard -> Prefs.STYLE_HARD; R.id.rbLubdub -> Prefs.STYLE_LUBDUB; else -> Prefs.STYLE_BREATHE }
-            }
-        }
-        slider(R.id.sbBlinkOn, R.id.lblBlinkOn, st.blinkOnMs.toFloat(), { getString(R.string.beat_length, it.toInt()) }) { st.blinkOnMs = it.toInt() }
-        slider(R.id.sbBlinkOff, R.id.lblBlinkOff, st.blinkOffMs.toFloat(), { getString(R.string.dark_gap, it.toInt()) }) { st.blinkOffMs = it.toInt() }
-        slider(R.id.sbBrightness, R.id.lblBrightness, (st.brightness * 100).toInt().toFloat(), { getString(R.string.brightness, it.toInt()) }) { st.brightness = it / 100f }
+    private fun buildBeat(c: LinearLayout) {
+        c.addView(ui.card(ui.switchRow(getString(R.string.blink_switch), null, st.blinkEnabled) { st.blinkEnabled = it }))
+
+        c.addView(ui.header(getString(R.string.beat_style)))
+        c.addView(ui.card(*ui.radioRows(listOf(
+            Triple(Prefs.STYLE_HARD, getString(R.string.style_blink), getString(R.string.style_blink_help)),
+            Triple(Prefs.STYLE_BREATHE, getString(R.string.style_breathe), getString(R.string.style_breathe_help)),
+            Triple(Prefs.STYLE_LUBDUB, getString(R.string.style_lubdub), getString(R.string.style_lubdub_help)),
+        ), st.beatStyle) { st.beatStyle = it }.toTypedArray()))
+
+        c.addView(ui.header(getString(R.string.timing)))
+        c.addView(ui.card(
+            ui.sliderRow(getString(R.string.beat_length).substringBefore(':'), 200f, 3000f, 100f, st.blinkOnMs.toFloat(), { "${it.toInt()} ms" }) { st.blinkOnMs = it.toInt() },
+            ui.sliderRow(getString(R.string.dark_gap).substringBefore(':'), 500f, 15000f, 500f, st.blinkOffMs.toFloat(), { "${it.toInt()} ms" }) { st.blinkOffMs = it.toInt() },
+        ))
+
+        c.addView(ui.header(getString(R.string.display)))
+        c.addView(ui.card(
+            ui.sliderRow(getString(R.string.brightness).substringBefore(':'), 1f, 100f, 1f, (st.brightness * 100).toInt().toFloat(), { "${it.toInt()} %" }) { st.brightness = it / 100f },
+            ui.switchRow(getString(R.string.battery_switch), null, st.showBattery) { st.showBattery = it },
+        ))
+        c.addView(ui.note(getString(R.string.brightness_help)))
     }
 
     // ---------------------------------------------------------------- layout & size
-    private fun bindLayout() {
-        val help = findViewById<TextView>(R.id.txtArrangementHelp)
-        fun describe(a: String) = when (a) {
-            Prefs.ARR_ROW -> getString(R.string.arr_row_help)
-            Prefs.ARR_CYCLE -> getString(R.string.arr_cycle_help)
-            else -> getString(R.string.arr_shape_help)
-        }
-        help.text = describe(st.arrangement)
-        findViewById<MaterialButtonToggleGroup>(R.id.tgArrangement).apply {
-            check(when (st.arrangement) { Prefs.ARR_ROW -> R.id.rbRow; Prefs.ARR_CYCLE -> R.id.rbCycle; else -> R.id.rbGeometric })
-            addOnButtonCheckedListener { _, id, checked ->
-                if (!checked) return@addOnButtonCheckedListener
-                st.arrangement = when (id) { R.id.rbRow -> Prefs.ARR_ROW; R.id.rbCycle -> Prefs.ARR_CYCLE; else -> Prefs.ARR_GEOMETRIC }
-                help.text = describe(st.arrangement)
-            }
-        }
-        slider(R.id.sbSize, R.id.lblSize, st.dotSizeDp.toFloat(), { getString(R.string.dot_size, it.toInt()) }) { st.dotSizeDp = it.toInt() }
+    private fun buildLayout(c: LinearLayout) {
+        c.addView(ui.header(getString(R.string.layout_title)))
+        c.addView(ui.card(*ui.radioRows(listOf(
+            Triple(Prefs.ARR_ROW, getString(R.string.arr_row), getString(R.string.arr_row_help)),
+            Triple(Prefs.ARR_GEOMETRIC, getString(R.string.arr_shape), getString(R.string.arr_shape_help)),
+            Triple(Prefs.ARR_CYCLE, getString(R.string.arr_cycle), getString(R.string.arr_cycle_help)),
+        ), st.arrangement) { st.arrangement = it }.toTypedArray()))
+        c.addView(ui.note(getString(R.string.layout_help)))
+
+        c.addView(ui.header(getString(R.string.size)))
+        c.addView(ui.card(
+            ui.sliderRow(getString(R.string.dot_size).substringBefore(':'), 8f, 64f, 1f, st.dotSizeDp.toFloat(), { "${it.toInt()} dp" }) { st.dotSizeDp = it.toInt() },
+        ))
     }
 
     // ---------------------------------------------------------------- shape
-    private fun bindShape() {
-        findViewById<Button>(R.id.btnShape).setOnClickListener { pickShape.launch(arrayOf("image/png")) }
-        findViewById<Button>(R.id.btnShapeClear).setOnClickListener { ShapeLoader.clear(this); st.customShape = false; refreshShape(null) }
+    private fun buildShape(c: LinearLayout) {
+        val img = ImageView(this).apply {
+            setBackgroundColor(0xFF000000.toInt()); setPadding(ui.dp(20), ui.dp(20), ui.dp(20), ui.dp(20))
+            clipToOutline = true
+            background = android.graphics.drawable.GradientDrawable().apply { cornerRadius = ui.dp(22f); setColor(0xFF000000.toInt()) }
+        }
+        val txt = TextView(this).apply { textSize = 15f; gravity = Gravity.CENTER; setPadding(0, ui.dp(12), 0, 0); setTextColor(getColor(R.color.ou_text_secondary)) }
+        shapeImage = img; shapeText = txt
+        c.addView(ui.header(getString(R.string.current_shape)))
+        c.addView(ui.card(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL; setPadding(ui.dp(24), ui.dp(24), ui.dp(24), ui.dp(24))
+            addView(img, LinearLayout.LayoutParams(ui.dp(112), ui.dp(112)))
+            addView(txt)
+            addView(ui.button(getString(R.string.shape_load), true) { pickShape.launch(arrayOf("image/png")) })
+            addView(ui.button(getString(R.string.shape_circle)) { ShapeLoader.clear(this@SettingsActivity); st.customShape = false; refreshShape(null) })
+        }))
+        c.addView(ui.header(getString(R.string.shape_rules_title)))
+        c.addView(ui.card(ui.note(getString(R.string.shape_rules)).apply { setPadding(ui.dp(24), ui.dp(16), ui.dp(24), ui.dp(16)); setLineSpacing(ui.dp(4f), 1f) }))
         refreshShape(null)
     }
 
     private fun refreshShape(error: String?) {
-        val img = findViewById<ImageView>(R.id.imgShape) ?: return
-        val txt = findViewById<TextView>(R.id.txtShape)
+        val img = shapeImage ?: return; val txt = shapeText ?: return
         val bmp = if (st.customShape) ShapeLoader.load(this) else null
         if (bmp != null) {
-            img.setImageBitmap(bmp); img.setColorFilter(AppColors.DEFAULT_COLOR, android.graphics.PorterDuff.Mode.MULTIPLY)
+            img.setImageBitmap(bmp); img.setColorFilter(AppColors.DEFAULT_COLOR, PorterDuff.Mode.MULTIPLY)
             txt.text = getString(R.string.shape_custom)
         } else {
             img.setImageDrawable(getDrawable(R.drawable.ic_dot)); img.clearColorFilter()
@@ -127,25 +144,40 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     // ---------------------------------------------------------------- developer
-    private fun bindDev() {
-        txtLog = findViewById(R.id.txtLog)
-        findViewById<TextView>(R.id.txtDisplays).text = CoverDisplays.describe(this)
-        findViewById<Button>(R.id.btnTestNotif).setOnClickListener {
-            log("Close the phone… test notification in 8 s"); handler.postDelayed({ TestNotification.post(this, true); log("posted") }, 8_000)
-        }
-        findViewById<Button>(R.id.btnCancelNotif).setOnClickListener { TestNotification.post(this, false); log("cancelled") }
-        findViewById<Button>(R.id.btnShowNow).setOnClickListener { show(MainActivity.PALETTE.copyOf(1)) }
-        findViewById<Button>(R.id.btnShowMulti).setOnClickListener {
-            log("Close the phone… 3 dots in 8 s"); handler.postDelayed({ show(MainActivity.PALETTE.copyOf(3)) }, 8_000)
-        }
-        findViewById<Button>(R.id.btnHide).setOnClickListener { IndicatorController.hide(this); log("HIDE sent") }
-
-        val txtFold = findViewById<TextView>(R.id.txtFold)
+    private fun buildDev(c: LinearLayout) {
+        val log = TextView(this).apply { typeface = android.graphics.Typeface.MONOSPACE; textSize = 11f; setPadding(ui.dp(24), ui.dp(12), ui.dp(24), ui.dp(12)); setTextColor(getColor(R.color.ou_text)) }
+        txtLog = log
+        c.addView(ui.header(getString(R.string.dev_test_title)))
+        c.addView(ui.card(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL; setPadding(ui.dp(16), ui.dp(8), ui.dp(16), ui.dp(16))
+            addView(ui.button(getString(R.string.dev_post_notif), true) {
+                log("Close the phone… test notification in 8 s"); handler.postDelayed({ TestNotification.post(this@SettingsActivity, true); log("posted") }, 8_000)
+            })
+            addView(ui.button(getString(R.string.dev_cancel_notif)) { TestNotification.post(this@SettingsActivity, false); log("cancelled") })
+        }))
+        c.addView(ui.header(getString(R.string.dev_manual)))
+        c.addView(ui.card(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL; setPadding(ui.dp(16), ui.dp(8), ui.dp(16), ui.dp(16))
+            addView(ui.buttonBar(
+                getString(R.string.dev_one_dot) to { show(MainActivity.PALETTE.copyOf(1)) },
+                getString(R.string.dev_three_dots) to { log("Close the phone… 3 dots in 8 s"); handler.postDelayed({ show(MainActivity.PALETTE.copyOf(3)) }, 8_000) },
+                getString(R.string.dev_hide) to { IndicatorController.hide(this@SettingsActivity); log("HIDE sent") },
+            ))
+        }))
+        val fold = TextView(this).apply { typeface = android.graphics.Typeface.MONOSPACE; textSize = 11f; setTextColor(getColor(R.color.ou_text)) }
+        c.addView(ui.header(getString(R.string.dev_device)))
+        c.addView(ui.card(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL; setPadding(ui.dp(24), ui.dp(12), ui.dp(24), ui.dp(12))
+            addView(TextView(this@SettingsActivity).apply { typeface = android.graphics.Typeface.MONOSPACE; textSize = 11f; text = CoverDisplays.describe(this@SettingsActivity); setTextColor(getColor(R.color.ou_text)) })
+            addView(fold)
+        }))
+        c.addView(ui.header(getString(R.string.dev_log)))
+        c.addView(ui.card(log))
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 WindowInfoTracker.getOrCreate(this@SettingsActivity).windowLayoutInfo(this@SettingsActivity).collect { info ->
-                    val fold = info.displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
-                    txtFold.text = if (fold == null) "FoldingFeature: none" else "FoldingFeature: ${fold.state} ${fold.orientation}"
+                    val f = info.displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+                    fold.text = if (f == null) "FoldingFeature: none" else "FoldingFeature: ${f.state} ${f.orientation}"
                 }
             }
         }
@@ -160,16 +192,6 @@ class SettingsActivity : AppCompatActivity() {
     private fun log(msg: String) {
         val ts = SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
         txtLog?.text = "$ts $msg\n${txtLog?.text}"
-    }
-
-    // ---------------------------------------------------------------- helpers
-    private fun slider(sliderId: Int, labelId: Int, value: Float, label: (Float) -> String, onChange: (Float) -> Unit) {
-        val lbl = findViewById<TextView>(labelId)
-        findViewById<Slider>(sliderId).apply {
-            this.value = value.coerceIn(valueFrom, valueTo)
-            lbl.text = label(this.value)
-            addOnChangeListener { _, v, fromUser -> lbl.text = label(v); if (fromUser) onChange(v) }
-        }
     }
 
     override fun onDestroy() { handler.removeCallbacksAndMessages(null); super.onDestroy() }
