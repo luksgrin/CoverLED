@@ -235,7 +235,7 @@ The indicator activity:
 
 Implemented with the public hinge-angle sensor (`Sensor.TYPE_HINGE_ANGLE`, wake-up): closed = angle < 10°. `DeviceStateManager` is still a system API in SDK 36 and Jetpack WindowManager's `FoldingFeature` requires a UI context, so neither works from the listener service. Jetpack WindowManager is still used in the debug UI.
 
-## 5.4 Known risks to validate first (Phase 2) — **validated 2026-08-29, see `PHASE2_RESULTS.md`**
+## 5.4 Known risks to validate first (Phase 2) — **validated 2026-08-29, see `device-test-results.md`**
 
 Outcome on Flip5 / One UI 8.0: risks 1, 2 and 4 are **cleared** (works on stock firmware, survives timeout via keep-screen-on, launch from app context allowed). Risk 3 (Samsung AOD pre-empting after a manual wake) still needs a hands-on test. Original list kept for reference:
 
@@ -620,7 +620,7 @@ Goal:
 
 **This phase gates the project.** If no configuration works, stop and reassess (see §5.5).
 
-## Phases 3–7 — **done 2026-08-29**, see `PHASE2_RESULTS.md` (second half)
+## Phases 3–7 — **done 2026-08-29**, see `device-test-results.md` (second half)
 
 ## Phase 3 — Notification listener
 
