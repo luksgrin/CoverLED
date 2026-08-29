@@ -38,8 +38,8 @@ app always gets a dot, or **Ignore** so it never does.
 - **Custom shape**: load your own PNG instead of a circle; it is tinted with each app's color.
   Rules: transparent background (that *is* the shape), drawn in **white** (gray = dimmer),
   ≤ 1024×1024 px, ≤ 2 MB, square canvas works best. Stored downscaled to 128×128 privately.
-- **Position**: drag the dot *and* the charging line on a scaled outline of the cover (camera cutout shown),
-  with a live preview on the real cover. Both stay clear of the camera automatically.
+- **Position**: drag the dot *and* the charging line on a scaled outline of the cover, with a live preview on
+  the real cover. The shaded band is the area the indicator never uses (camera cutout insets).
 
 ## Install and set up
 
@@ -123,9 +123,9 @@ adb shell screencap -d <physical id> /sdcard/c.png   # id from: adb shell dumpsy
 - [`docs/device-test-results.md`](docs/device-test-results.md) — what was verified on the device, and how
 
 ## Languages
-The UI follows the system language. English and Spanish are included (`res/values/strings.xml`,
-`res/values-es/strings.xml`); the charging duration ("1 h 43 min") is formatted by ICU for any locale.
-To add a language, copy `values-es/strings.xml` to `values-<lang>/` and translate.
+The UI follows the system language. Included: English, Spanish, German, French, Italian, Portuguese,
+Japanese (`res/values-<lang>/strings.xml`); the charging duration ("1 h 43 min") is formatted by ICU
+for any locale. To add a language, copy `values-es/strings.xml` to `values-<lang>/` and translate.
 
 ## Known limitations
 - Can't use Samsung's low-power AOD (system-only), so a pending dot keeps the cover panel on.

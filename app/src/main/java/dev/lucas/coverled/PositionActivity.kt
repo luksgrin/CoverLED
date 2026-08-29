@@ -72,14 +72,17 @@ class PositionActivity : AppCompatActivity() {
         private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(160, 160, 160); textSize = dp(11).toFloat(); textAlign = Paint.Align.CENTER }
         private val sample = "⚡ 79 % · 1 h 41 min"
 
-        // real cover geometry: size and cutout rect (fractions)
+        // real cover geometry: aspect and the cutout *insets* (what the indicator pads by).
+        // Positions are fractions of the inset-free area, exactly as in CoverIndicatorActivity.
         private var aspect = 748f / 720f
-        private var cutout: RectF? = null
+        private var insetL = 0f; private var insetT = 0f; private var insetR = 0f; private var insetB = 0f   // fractions of full size
+        private val usable = RectF()
         init {
             CoverDisplays.cover(context)?.let { d ->
                 val p = android.graphics.Point(); @Suppress("DEPRECATION") d.getRealSize(p); aspect = p.x.toFloat() / p.y
-                d.cutout?.boundingRects?.firstOrNull()?.let { r ->
-                    cutout = RectF(r.left / p.x.toFloat(), r.top / p.y.toFloat(), r.right / p.x.toFloat(), r.bottom / p.y.toFloat())
+                d.cutout?.let { c ->
+                    insetL = c.safeInsetLeft / p.x.toFloat(); insetR = c.safeInsetRight / p.x.toFloat()
+                    insetT = c.safeInsetTop / p.y.toFloat(); insetB = c.safeInsetBottom / p.y.toFloat()
                 }
             }
         }
@@ -95,15 +98,17 @@ class PositionActivity : AppCompatActivity() {
             var fw = w.toFloat(); var fh = fw / aspect
             if (fh > h) { fh = h.toFloat(); fw = fh * aspect }
             frame.set((w - fw) / 2, (h - fh) / 2, (w + fw) / 2, (h + fh) / 2)
+            usable.set(frame.left + insetL * fw, frame.top + insetT * fh, frame.right - insetR * fw, frame.bottom - insetB * fh)
         }
 
-        private fun px(fx: Float) = frame.left + fx * frame.width()
-        private fun py(fy: Float) = frame.top + fy * frame.height()
+        private fun px(fx: Float) = usable.left + fx * usable.width()
+        private fun py(fy: Float) = usable.top + fy * usable.height()
 
         override fun onDraw(c: Canvas) {
             val r = dp(24).toFloat()
             c.drawRoundRect(frame, r, r, paintFill)
-            cutout?.let { c.drawRect(px(it.left), py(it.top), px(it.right), py(it.bottom), paintCutout) }
+            // everything outside the usable area is unreachable (camera band / cutout insets)
+            c.save(); c.clipOutRect(usable); c.drawRoundRect(frame, r, r, paintCutout); c.restore()
             c.drawRoundRect(frame, r, r, paintFrame)
             c.drawCircle(px(dx), py(dy), dp(9).toFloat(), paintDot)
             c.drawText(sample, px(bx), py(by) + paintText.textSize / 3, paintText)
@@ -123,7 +128,7 @@ class PositionActivity : AppCompatActivity() {
         }
 
         private fun move(e: MotionEvent) {
-            val fx = (e.x - frame.left) / frame.width(); val fy = (e.y - frame.top) / frame.height()
+            val fx = (e.x - usable.left) / usable.width(); val fy = (e.y - usable.top) / usable.height()
             if (dragging == 2) setBattery(fx, fy) else setDot(fx, fy)
         }
 
