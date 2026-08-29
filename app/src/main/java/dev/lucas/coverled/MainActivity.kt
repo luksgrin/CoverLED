@@ -163,6 +163,10 @@ class MainActivity : AppCompatActivity() {
             isChecked = st.blinkEnabled
             setOnCheckedChangeListener { _, v -> st.blinkEnabled = v }
         }
+        findViewById<Switch>(R.id.swFade).apply {
+            isChecked = st.fadeEnabled
+            setOnCheckedChangeListener { _, v -> st.fadeEnabled = v }
+        }
         findViewById<Switch>(R.id.swBattery).apply {
             isChecked = st.showBattery
             setOnCheckedChangeListener { _, v -> st.showBattery = v }
@@ -170,13 +174,13 @@ class MainActivity : AppCompatActivity() {
         // on: 200..3000 ms in 100 ms steps (0..28); off: 500..15000 ms in 500 ms steps (0..29)
         findViewById<SeekBar>(R.id.sbBlinkOn).apply {
             progress = (st.blinkOnMs - 200) / 100
-            lblOn.text = "On time: ${st.blinkOnMs} ms"
-            setOnSeekBarChangeListener(onChange { p -> st.blinkOnMs = 200 + p * 100; lblOn.text = "On time: ${st.blinkOnMs} ms" })
+            lblOn.text = "Beat length: ${st.blinkOnMs} ms"
+            setOnSeekBarChangeListener(onChange { p -> st.blinkOnMs = 200 + p * 100; lblOn.text = "Beat length: ${st.blinkOnMs} ms" })
         }
         findViewById<SeekBar>(R.id.sbBlinkOff).apply {
             progress = (st.blinkOffMs - 500) / 500
-            lblOff.text = "Off time: ${st.blinkOffMs} ms"
-            setOnSeekBarChangeListener(onChange { p -> st.blinkOffMs = 500 + p * 500; lblOff.text = "Off time: ${st.blinkOffMs} ms" })
+            lblOff.text = "Dark gap: ${st.blinkOffMs} ms"
+            setOnSeekBarChangeListener(onChange { p -> st.blinkOffMs = 500 + p * 500; lblOff.text = "Dark gap: ${st.blinkOffMs} ms" })
         }
         findViewById<SeekBar>(R.id.sbBrightness).apply {
             progress = (st.brightness * 100).toInt() - 1

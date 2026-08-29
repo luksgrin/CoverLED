@@ -90,11 +90,17 @@
             android:layout_height="wrap_content"
             android:text="Blink (saves battery)" />
 
+        <Switch
+            android:id="@+id/swFade"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fade in/out (heartbeat) instead of hard blink" />
+
         <TextView
             android:id="@+id/lblBlinkOn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="On time" />
+            android:text="Beat length" />
 
         <SeekBar
             android:id="@+id/sbBlinkOn"
@@ -106,7 +112,7 @@
             android:id="@+id/lblBlinkOff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Off time" />
+            android:text="Dark gap" />
 
         <SeekBar
             android:id="@+id/sbBlinkOff"

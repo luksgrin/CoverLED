@@ -12,12 +12,17 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(KEY_BLINK, true)
         set(v) = prefs.edit().putBoolean(KEY_BLINK, v).apply()
 
+    /** Fade in/out (heartbeat) instead of a hard on/off blink. */
+    var fadeEnabled: Boolean
+        get() = prefs.getBoolean(KEY_FADE, true)
+        set(v) = prefs.edit().putBoolean(KEY_FADE, v).apply()
+
     var blinkOnMs: Int
-        get() = prefs.getInt(KEY_BLINK_ON, 800)
+        get() = prefs.getInt(KEY_BLINK_ON, 1400)
         set(v) = prefs.edit().putInt(KEY_BLINK_ON, v.coerceIn(200, 3000)).apply()
 
     var blinkOffMs: Int
-        get() = prefs.getInt(KEY_BLINK_OFF, 3000)
+        get() = prefs.getInt(KEY_BLINK_OFF, 2500)
         set(v) = prefs.edit().putInt(KEY_BLINK_OFF, v.coerceIn(500, 15000)).apply()
 
     /** Window brightness 0.01–1.0 (the panel is fully on; this is the backlight/OLED level). */
@@ -32,6 +37,7 @@ class Settings(context: Context) {
 
     companion object {
         const val KEY_BLINK = "blink"
+        const val KEY_FADE = "fade"
         const val KEY_BLINK_ON = "blink_on_ms"
         const val KEY_BLINK_OFF = "blink_off_ms"
         const val KEY_BRIGHTNESS = "brightness"

@@ -1,5 +1,8 @@
 package dev.lucas.coverled
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -16,6 +19,8 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -46,12 +51,27 @@ class CoverIndicatorActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var chargingIntent: Intent? = null
 
-    // Duty cycle: dots visible for blinkOnMs, dark for blinkOffMs. Battery text is not blinked.
+    // Duty cycle: one "beat" (blinkOnMs) then dark for blinkOffMs. Battery text is not blinked.
+    // Beat = hard on/off, or a fade in + fade out (heartbeat) when fadeEnabled.
+    private var beat: Animator? = null
     private val blink = object : Runnable {
         override fun run() {
-            val on = dots.visibility != View.VISIBLE
-            dots.visibility = if (on) View.VISIBLE else View.INVISIBLE
-            handler.postDelayed(this, (if (on) settings.blinkOnMs else settings.blinkOffMs).toLong())
+            val on = settings.blinkOnMs.toLong()
+            beat?.cancel()
+            if (settings.fadeEnabled) {
+                val up = ObjectAnimator.ofFloat(dots, View.ALPHA, 0f, 1f).apply {
+                    duration = on * 45 / 100; interpolator = DecelerateInterpolator()
+                }
+                val down = ObjectAnimator.ofFloat(dots, View.ALPHA, 1f, 0f).apply {
+                    duration = on * 55 / 100; interpolator = AccelerateInterpolator()
+                }
+                beat = AnimatorSet().apply { playSequentially(up, down); start() }
+                handler.postDelayed(this, on + settings.blinkOffMs)
+            } else {
+                dots.alpha = 1f
+                handler.postDelayed({ dots.alpha = 0f }, on)
+                handler.postDelayed(this, on + settings.blinkOffMs)
+            }
         }
     }
 
@@ -129,19 +149,22 @@ class CoverIndicatorActivity : AppCompatActivity() {
     override fun onStop() {
         runCatching { unregisterReceiver(batteryReceiver) }
         settings.prefs.unregisterOnSharedPreferenceChangeListener(prefListener)
-        handler.removeCallbacks(blink)
+        handler.removeCallbacksAndMessages(null)
+        beat?.cancel()
         super.onStop()
         Log.i(TAG, "Indicator onStop")
     }
 
     private fun applySettings() {
         window.attributes = window.attributes.apply { screenBrightness = settings.brightness }
-        handler.removeCallbacks(blink)
+        handler.removeCallbacksAndMessages(null)
+        beat?.cancel()
+        dots.visibility = View.VISIBLE
         if (settings.blinkEnabled) {
-            dots.visibility = View.VISIBLE
-            handler.postDelayed(blink, settings.blinkOnMs.toLong())
+            dots.alpha = 0f
+            handler.post(blink)
         } else {
-            dots.visibility = View.VISIBLE
+            dots.alpha = 1f
         }
         chargingIntent?.let { renderBattery(it) }
     }

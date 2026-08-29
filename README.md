@@ -57,7 +57,9 @@ notification; tick **Ignore** to keep an app from lighting the LED.
 (Channel light colors are a system-only API, so they can't be read by a third-party listener.)
 
 ### Power settings (in the app)
-- **Blink** (default on): dots visible 0.8 s, dark 3 s; both adjustable. The battery line does not blink.
+- **Blink** (default on) with **Fade / heartbeat** (default on): the dot breathes in and out over the
+  beat length (default 1.4 s), then stays dark for the gap (default 2.5 s); both adjustable. Turn Fade
+  off for a hard on/off blink. The battery line does not blink.
 - **Brightness** (default 5 %): window brightness while the LED is showing.
 Changes apply live to a visible LED. Note the panel itself stays on while a dot is pending — this is
 not Samsung's low-power AOD — so blink + low brightness are what keep the cost down.
