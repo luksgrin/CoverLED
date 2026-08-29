@@ -1,234 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:fitsSystemWindows="true">
 
-        <TextView
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="CoverLED — Phase 2 spike"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/app_name"
+            app:titleTextAppearance="?attr/textAppearanceHeadlineSmall" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/txtDisplays"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:fontFamily="monospace"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/txtFold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:fontFamily="monospace"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/txtAccess"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:fontFamily="monospace"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btnAccess"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Grant notification access" />
-
-        <Button
-            android:id="@+id/btnOverlay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Allow display over other apps" />
-
-        <TextView
-            android:id="@+id/txtState"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btnTestNotif"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Post test notification (close the phone!)" />
-
-        <Button
-            android:id="@+id/btnCancelNotif"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cancel test notification" />
-
-        <Button
-            android:id="@+id/btnColors"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="App colors &amp; ignore list" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Indicator settings"
-            android:textStyle="bold" />
-
-        <Switch
-            android:id="@+id/swBlink"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Blink (saves battery)" />
-
-        <RadioGroup
-            android:id="@+id/rgStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <RadioButton android:id="@+id/rbHard" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Blink" />
-            <RadioButton android:id="@+id/rbBreathe" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Breathe" />
-            <RadioButton android:id="@+id/rbLubdub" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Lub-dub" />
-        </RadioGroup>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Several apps: arrangement" />
-
-        <RadioGroup
-            android:id="@+id/rgArrangement"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <RadioButton android:id="@+id/rbRow" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Row" />
-            <RadioButton android:id="@+id/rbGeometric" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Shape" />
-            <RadioButton android:id="@+id/rbCycle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="One dot, cycling colors" />
-        </RadioGroup>
-
-        <TextView
-            android:id="@+id/lblSize"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dot size" />
-
-        <SeekBar
-            android:id="@+id/sbSize"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="56" />
-
-        <TextView
-            android:id="@+id/txtShape"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="12sp" />
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button android:id="@+id/btnShape" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Load shape PNG…" />
-            <Button android:id="@+id/btnShapeClear" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Use circles" />
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/home_tagline"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <!-- Setup status -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSetup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setup_title"
+                        android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <TextView android:id="@+id/txtNotif" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textAppearance="?attr/textAppearanceBodyMedium" />
+                        <com.google.android.material.button.MaterialButton android:id="@+id/btnAccess" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/fix" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <TextView android:id="@+id/txtOverlay" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textAppearance="?attr/textAppearanceBodyMedium" />
+                        <com.google.android.material.button.MaterialButton android:id="@+id/btnOverlay" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/fix" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtState"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <include android:id="@+id/catBeat" layout="@layout/item_category" />
+            <include android:id="@+id/catLayout" layout="@layout/item_category" />
+            <include android:id="@+id/catShape" layout="@layout/item_category" />
+            <include android:id="@+id/catApps" layout="@layout/item_category" />
+            <include android:id="@+id/catPosition" layout="@layout/item_category" />
+            <include android:id="@+id/catDev" layout="@layout/item_category" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnPosition"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dot position" />
-
-        <TextView
-            android:id="@+id/lblBlinkOn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Beat length" />
-
-        <SeekBar
-            android:id="@+id/sbBlinkOn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="28" />
-
-        <TextView
-            android:id="@+id/lblBlinkOff"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dark gap" />
-
-        <SeekBar
-            android:id="@+id/sbBlinkOff"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="29" />
-
-        <TextView
-            android:id="@+id/lblBrightness"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Brightness" />
-
-        <SeekBar
-            android:id="@+id/sbBrightness"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="99" />
-
-        <Switch
-            android:id="@+id/swBattery"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Show charging info under the dot" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Manual indicator (debug)"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnShowNow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Show dot on cover NOW" />
-
-        <Button
-            android:id="@+id/btnShowDelayed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Show dot on cover in 8 s (close the phone!)" />
-
-        <Button
-            android:id="@+id/btnShowMulti"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Show 3 dots in 8 s" />
-
-        <Button
-            android:id="@+id/btnHide"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hide indicator" />
-
-        <TextView
-            android:id="@+id/txtLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="monospace"
-            android:textSize="11sp" />
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

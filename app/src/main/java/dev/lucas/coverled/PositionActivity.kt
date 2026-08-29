@@ -29,7 +29,12 @@ class PositionActivity : AppCompatActivity() {
         settings = Settings(this)
         title = "Dot position"
 
-        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(16), dp(16), dp(16)) }
+        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), 0, dp(16), dp(16)); applySystemInsetsPadding(top = true) }
+        root.addView(com.google.android.material.appbar.MaterialToolbar(this).apply {
+            title = getString(R.string.cat_position)
+            setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
+            setNavigationOnClickListener { finish() }
+        }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { leftMargin = -dp(16); rightMargin = -dp(16) })
         root.addView(TextView(this).apply {
             text = "Drag the dot to where you want it on the cover screen. Close the phone (or peek at the cover) to see the live preview."
         })

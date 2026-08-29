@@ -29,7 +29,12 @@ class ColorsActivity : AppCompatActivity() {
         colors = AppColors(this)
         title = "App colors & ignore list"
 
-        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; applySystemInsetsPadding(top = true) }
+        root.addView(com.google.android.material.appbar.MaterialToolbar(this).apply {
+            title = getString(R.string.cat_apps)
+            setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
+            setNavigationOnClickListener { finish() }
+        })
         root.addView(TextView(this).apply {
             text = "Apps appear here after their first notification. Tap a color to change it; " +
                 "Auto uses the color the app declares for its LED, else its accent, else its icon. " +

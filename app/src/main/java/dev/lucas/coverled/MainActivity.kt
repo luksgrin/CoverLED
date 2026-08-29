@@ -1,266 +1,90 @@
 package dev.lucas.coverled
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.provider.Settings
+import android.view.View
 import android.widget.Button
-import android.widget.RadioGroup
-import android.widget.SeekBar
-import android.widget.Switch
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoTracker
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-/** Main-screen debug console for the Phase 2 spike. */
+/** Home: setup status + categories. Also the adb entry point for the debug hooks. */
 class MainActivity : AppCompatActivity() {
 
     companion object {
+        /** adb: --ei autoshow N shows N dots (0 hides), --ei testnotif 1/0 posts/cancels, --ez clearall true. */
         const val EXTRA_AUTOSHOW = "autoshow"
-        /** adb: --ei testnotif 1 posts a test notification, 0 cancels it. */
         const val EXTRA_TESTNOTIF = "testnotif"
-        /** adb: --ez clearall true dismisses all pending notifications (debug). */
         const val EXTRA_CLEARALL = "clearall"
-        private const val CHANNEL = "test"
-        private const val TEST_ID = 4242
         val PALETTE = intArrayOf(
             Color.rgb(33, 150, 243), Color.rgb(76, 175, 80), Color.rgb(156, 39, 176),
             Color.rgb(244, 67, 54), Color.rgb(255, 235, 59), Color.WHITE
         )
     }
 
-    private lateinit var txtLog: TextView
-
-    private val pickShape = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri == null) return@registerForActivityResult
-        val err = ShapeLoader.import(this, uri)
-        if (err == null) { dev.lucas.coverled.Settings(this).customShape = true; log("custom shape loaded") }
-        else log("shape rejected: $err")
-        refreshShapeText()
-    }
-
-    private fun refreshShapeText() {
-        val st = dev.lucas.coverled.Settings(this)
-        findViewById<TextView>(R.id.txtShape).text =
-            if (st.customShape && dev.lucas.coverled.Settings.shapeFile(this).exists()) "Shape: custom PNG (tinted per app)"
-            else "Shape: circle. Custom PNG rules: transparent background, white drawing (gray = dimmer), " +
-                "≤ ${dev.lucas.coverled.Settings.SHAPE_MAX_INPUT_PX} px per side, ≤ 2 MB, square works best."
-    }
-    private val handler = Handler(Looper.getMainLooper())
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        android.util.Log.i("CoverLED", "MainActivity onCreate display=${display?.displayId} extras=${intent?.extras?.keySet()?.joinToString()} autoshow=${intent?.getIntExtra(EXTRA_AUTOSHOW, -1)}")
         setContentView(R.layout.activity_main)
+        findViewById<View>(R.id.content).applySystemInsetsPadding()
+        handleDebugIntent(intent)
 
-        txtLog = findViewById(R.id.txtLog)
-        val txtDisplays = findViewById<TextView>(R.id.txtDisplays)
-        val txtFold = findViewById<TextView>(R.id.txtFold)
-
-        txtDisplays.text = CoverDisplays.describe(this)
-
-        findViewById<Button>(R.id.btnShowNow).setOnClickListener {
-            show(intArrayOf(Color.rgb(33, 150, 243)))
-        }
-        findViewById<Button>(R.id.btnShowDelayed).setOnClickListener {
-            log("Close the phone now… launching in 8 s")
-            handler.postDelayed({ show(intArrayOf(Color.rgb(33, 150, 243))) }, 8_000)
-        }
-        findViewById<Button>(R.id.btnShowMulti).setOnClickListener {
-            log("Close the phone now… launching 3 dots in 8 s")
-            handler.postDelayed({
-                show(intArrayOf(Color.rgb(33, 150, 243), Color.rgb(76, 175, 80), Color.rgb(156, 39, 176)))
-            }, 8_000)
-        }
-        findViewById<Button>(R.id.btnHide).setOnClickListener {
-            IndicatorController.hide(this); log("HIDE sent")
-        }
-
-        // Debug hook so the spike can be driven over adb while the phone is closed:
-        //   adb shell am start -n dev.lucas.coverled/.MainActivity --ei autoshow 3
-        // Shows N dots immediately; 0 hides.
-        if (intent.hasExtra(EXTRA_AUTOSHOW)) handleAutoshow(intent.getIntExtra(EXTRA_AUTOSHOW, 1))
-        if (intent.hasExtra(EXTRA_TESTNOTIF)) testNotification(intent.getIntExtra(EXTRA_TESTNOTIF, 1) > 0)
-        if (intent.getBooleanExtra(EXTRA_CLEARALL, false)) LedNotificationListener.debugClearAll()
-
-        bindSettings()
-        findViewById<Button>(R.id.btnColors).setOnClickListener { startActivity(Intent(this, ColorsActivity::class.java)) }
-
+        findViewById<Button>(R.id.btnAccess).setOnClickListener { startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
         findViewById<Button>(R.id.btnOverlay).setOnClickListener {
             startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
         }
-        findViewById<Button>(R.id.btnAccess).setOnClickListener {
-            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-        }
-        findViewById<Button>(R.id.btnTestNotif).setOnClickListener {
-            log("Close the phone… test notification in 8 s")
-            handler.postDelayed({ testNotification(true) }, 8_000)
-        }
-        findViewById<Button>(R.id.btnCancelNotif).setOnClickListener { testNotification(false) }
+
+        category(R.id.catBeat, "💓", R.string.cat_beat, R.string.cat_beat_sub) { startActivity(SettingsActivity.intent(this, SettingsActivity.SECTION_BEAT)) }
+        category(R.id.catLayout, "⬡", R.string.cat_layout, R.string.cat_layout_sub) { startActivity(SettingsActivity.intent(this, SettingsActivity.SECTION_LAYOUT)) }
+        category(R.id.catShape, "★", R.string.cat_shape, R.string.cat_shape_sub) { startActivity(SettingsActivity.intent(this, SettingsActivity.SECTION_SHAPE)) }
+        category(R.id.catApps, "🎨", R.string.cat_apps, R.string.cat_apps_sub) { startActivity(Intent(this, ColorsActivity::class.java)) }
+        category(R.id.catPosition, "⌖", R.string.cat_position, R.string.cat_position_sub) { startActivity(Intent(this, PositionActivity::class.java)) }
+        category(R.id.catDev, "🛠", R.string.cat_dev, R.string.cat_dev_sub) { startActivity(SettingsActivity.intent(this, SettingsActivity.SECTION_DEV)) }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 NotificationState.get(this@MainActivity).snapshot.collect { snap ->
+                    val colors = AppColors(this@MainActivity)
                     findViewById<TextView>(R.id.txtState).text =
-                        if (snap.isEmpty()) "pending: (none)"
-                        else "pending:\n" + snap.entries.joinToString("\n") { "  ${it.key} ×${it.value}" }
+                        if (snap.isEmpty()) "Nothing pending right now."
+                        else "Pending: " + snap.keys.joinToString { colors.label(it) }
                 }
-            }
-        }
-
-        // Fold-state readout (spec §5.3). Runs while this activity is started.
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                WindowInfoTracker.getOrCreate(this@MainActivity)
-                    .windowLayoutInfo(this@MainActivity)
-                    .collect { info ->
-                        val fold = info.displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
-                        txtFold.text = when {
-                            fold == null -> "FoldingFeature: none (closed, or single-screen layout)"
-                            else -> "FoldingFeature: state=${fold.state} orientation=${fold.orientation}"
-                        }
-                    }
             }
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        if (intent.hasExtra(EXTRA_AUTOSHOW)) handleAutoshow(intent.getIntExtra(EXTRA_AUTOSHOW, 1))
-        if (intent.hasExtra(EXTRA_TESTNOTIF)) testNotification(intent.getIntExtra(EXTRA_TESTNOTIF, 1) > 0)
+    private fun category(id: Int, emoji: String, title: Int, subtitle: Int, onClick: () -> Unit) {
+        val v = findViewById<View>(id)
+        v.findViewById<TextView>(R.id.emoji).text = emoji
+        v.findViewById<TextView>(R.id.title).setText(title)
+        v.findViewById<TextView>(R.id.subtitle).setText(subtitle)
+        v.setOnClickListener { onClick() }
+    }
+
+    override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); handleDebugIntent(intent) }
+
+    private fun handleDebugIntent(intent: Intent) {
+        if (intent.hasExtra(EXTRA_AUTOSHOW)) {
+            val n = intent.getIntExtra(EXTRA_AUTOSHOW, 1)
+            if (n <= 0) IndicatorController.hide(this) else IndicatorController.show(this, PALETTE.copyOf(n.coerceAtMost(PALETTE.size)))
+        }
+        if (intent.hasExtra(EXTRA_TESTNOTIF)) TestNotification.post(this, intent.getIntExtra(EXTRA_TESTNOTIF, 1) > 0)
         if (intent.getBooleanExtra(EXTRA_CLEARALL, false)) LedNotificationListener.debugClearAll()
     }
 
     override fun onResume() {
         super.onResume()
-        val enabled = NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
-        findViewById<TextView>(R.id.txtAccess).text =
-            (if (enabled) "notification access: GRANTED" else "notification access: NOT granted") +
-            (if (Settings.canDrawOverlays(this)) "\ndisplay over other apps: GRANTED" else "\ndisplay over other apps: NOT granted (LED will be blocked)")
-    }
-
-    private fun testNotification(post: Boolean) {
-        val nm = getSystemService(NotificationManager::class.java)
-        if (!post) { nm.cancel(TEST_ID); log("test notification cancelled"); return }
-        nm.createNotificationChannel(NotificationChannel(CHANNEL, getString(R.string.test_channel), NotificationManager.IMPORTANCE_DEFAULT))
-        if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-            log("POST_NOTIFICATIONS not granted — enable notifications for CoverLED in Settings")
-        }
-        val n = NotificationCompat.Builder(this, CHANNEL)
-            .setSmallIcon(R.drawable.ic_dot)
-            .setContentTitle("CoverLED test")
-            .setContentText("If the LED works, a white dot is on the cover now.")
-            .setAutoCancel(true)
-            .build()
-        runCatching { nm.notify(TEST_ID, n); log("test notification posted") }
-            .onFailure { log("post failed: ${it.message}") }
-    }
-
-    private fun bindSettings() {
-        val st = Settings(this)
-        val lblOn = findViewById<TextView>(R.id.lblBlinkOn)
-        val lblOff = findViewById<TextView>(R.id.lblBlinkOff)
-        val lblBr = findViewById<TextView>(R.id.lblBrightness)
-
-        findViewById<Switch>(R.id.swBlink).apply {
-            isChecked = st.blinkEnabled
-            setOnCheckedChangeListener { _, v -> st.blinkEnabled = v }
-        }
-        findViewById<RadioGroup>(R.id.rgStyle).apply {
-            check(when (st.beatStyle) { dev.lucas.coverled.Settings.STYLE_HARD -> R.id.rbHard; dev.lucas.coverled.Settings.STYLE_LUBDUB -> R.id.rbLubdub; else -> R.id.rbBreathe })
-            setOnCheckedChangeListener { _, id ->
-                st.beatStyle = when (id) { R.id.rbHard -> dev.lucas.coverled.Settings.STYLE_HARD; R.id.rbLubdub -> dev.lucas.coverled.Settings.STYLE_LUBDUB; else -> dev.lucas.coverled.Settings.STYLE_BREATHE }
-            }
-        }
-        findViewById<RadioGroup>(R.id.rgArrangement).apply {
-            check(when (st.arrangement) {
-                dev.lucas.coverled.Settings.ARR_ROW -> R.id.rbRow
-                dev.lucas.coverled.Settings.ARR_CYCLE -> R.id.rbCycle
-                else -> R.id.rbGeometric
-            })
-            setOnCheckedChangeListener { _, id ->
-                st.arrangement = when (id) {
-                    R.id.rbRow -> dev.lucas.coverled.Settings.ARR_ROW
-                    R.id.rbCycle -> dev.lucas.coverled.Settings.ARR_CYCLE
-                    else -> dev.lucas.coverled.Settings.ARR_GEOMETRIC
-                }
-            }
-        }
-        val lblSize = findViewById<TextView>(R.id.lblSize)
-        findViewById<SeekBar>(R.id.sbSize).apply {
-            progress = st.dotSizeDp - 8
-            lblSize.text = "Dot size: ${st.dotSizeDp} dp"
-            setOnSeekBarChangeListener(onChange { p -> st.dotSizeDp = 8 + p; lblSize.text = "Dot size: ${st.dotSizeDp} dp" })
-        }
-        findViewById<Button>(R.id.btnShape).setOnClickListener { pickShape.launch(arrayOf("image/png")) }
-        findViewById<Button>(R.id.btnShapeClear).setOnClickListener {
-            ShapeLoader.clear(this); st.customShape = false; refreshShapeText(); log("back to circles")
-        }
-        refreshShapeText()
-
-        findViewById<Button>(R.id.btnPosition).setOnClickListener { startActivity(Intent(this, PositionActivity::class.java)) }
-        findViewById<Switch>(R.id.swBattery).apply {
-            isChecked = st.showBattery
-            setOnCheckedChangeListener { _, v -> st.showBattery = v }
-        }
-        // on: 200..3000 ms in 100 ms steps (0..28); off: 500..15000 ms in 500 ms steps (0..29)
-        findViewById<SeekBar>(R.id.sbBlinkOn).apply {
-            progress = (st.blinkOnMs - 200) / 100
-            lblOn.text = "Beat length: ${st.blinkOnMs} ms"
-            setOnSeekBarChangeListener(onChange { p -> st.blinkOnMs = 200 + p * 100; lblOn.text = "Beat length: ${st.blinkOnMs} ms" })
-        }
-        findViewById<SeekBar>(R.id.sbBlinkOff).apply {
-            progress = (st.blinkOffMs - 500) / 500
-            lblOff.text = "Dark gap: ${st.blinkOffMs} ms"
-            setOnSeekBarChangeListener(onChange { p -> st.blinkOffMs = 500 + p * 500; lblOff.text = "Dark gap: ${st.blinkOffMs} ms" })
-        }
-        findViewById<SeekBar>(R.id.sbBrightness).apply {
-            progress = (st.brightness * 100).toInt() - 1
-            lblBr.text = "Brightness: ${(st.brightness * 100).toInt()} %"
-            setOnSeekBarChangeListener(onChange { p -> st.brightness = (p + 1) / 100f; lblBr.text = "Brightness: ${p + 1} %" })
-        }
-    }
-
-    private fun onChange(f: (Int) -> Unit) = object : SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(sb: SeekBar, p: Int, fromUser: Boolean) { if (fromUser) f(p) }
-        override fun onStartTrackingTouch(sb: SeekBar) {}
-        override fun onStopTrackingTouch(sb: SeekBar) {}
-    }
-
-    private fun handleAutoshow(n: Int) {
-        if (n <= 0) { IndicatorController.hide(this); log("autoshow: HIDE"); return }
-        show(PALETTE.copyOf(n.coerceAtMost(PALETTE.size)))
-    }
-
-    private fun show(colors: IntArray) {
-        IndicatorController.show(this, colors)
-            .onSuccess { log("Launched on display $it") }
-            .onFailure { log("FAILED: ${it.javaClass.simpleName}: ${it.message}") }
-    }
-
-    private fun log(msg: String) {
-        val ts = SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
-        txtLog.text = "$ts $msg\n${txtLog.text}"
-    }
-
-    override fun onDestroy() {
-        handler.removeCallbacksAndMessages(null)
-        super.onDestroy()
+        val notif = NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
+        val overlay = Settings.canDrawOverlays(this)
+        findViewById<TextView>(R.id.txtNotif).text = (if (notif) "✅ " else "⚠️ ") + getString(if (notif) R.string.setup_notif_ok else R.string.setup_notif_missing)
+        findViewById<TextView>(R.id.txtOverlay).text = (if (overlay) "✅ " else "⚠️ ") + getString(if (overlay) R.string.setup_overlay_ok else R.string.setup_overlay_missing)
+        findViewById<View>(R.id.btnAccess).visibility = if (notif) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.btnOverlay).visibility = if (overlay) View.GONE else View.VISIBLE
     }
 }

@@ -86,9 +86,12 @@ app/src/main/java/dev/lucas/coverled/
   DotView.kt                  circles or custom shape, row / polygon layouts
   Settings.kt                 all user preferences
   ShapeLoader.kt              validates/imports the custom PNG shape
-  MainActivity.kt             setup, settings, debug console
+  MainActivity.kt             home: setup status + categories (also the adb debug entry point)
+  SettingsActivity.kt         one category per screen: beat & brightness, layout & size, shape, developer
   ColorsActivity.kt           per-app color / priority / ignore editor
   PositionActivity.kt         drag-to-place the dot with live preview
+  TestNotification.kt         our own test notification
+  Insets.kt                   edge-to-edge padding helper (keeps content clear of the camera cutout)
 ```
 
 ## Build
