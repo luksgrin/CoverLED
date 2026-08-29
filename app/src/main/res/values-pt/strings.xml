@@ -2,7 +2,6 @@
     <string name="app_name">CoverLED</string>
     <string name="test_channel">Teste do CoverLED</string>
     <string name="home_tagline">Um LED de notificações para o ecrã exterior. Feche o telemóvel; um ponto colorido mostra o que está à espera.</string>
-    <string name="setup_title">Configuração</string>
     <string name="setup_notif_ok">Acesso às notificações concedido</string>
     <string name="setup_notif_missing">É necessário acesso às notificações</string>
     <string name="setup_overlay_ok">«Mostrar sobre outras apps» concedido</string>
@@ -74,7 +73,6 @@
     <string name="position_center">Centro</string>
     <string name="position_top">Cima</string>
     <string name="position_bottom">Baixo</string>
-    <string name="position_hint">⚡ o carregamento aparece aqui</string>
     <string name="color_red">Vermelho</string>
     <string name="color_pink">Rosa</string>
     <string name="color_purple">Roxo</string>
@@ -93,10 +91,8 @@
     <string name="style_lubdub_help">Dois pulsos, como um coração</string>
     <string name="timing">Tempos</string>
     <string name="display">Ecrã</string>
-    <string name="arrangement">Disposição</string>
     <string name="size">Tamanho</string>
     <string name="current_shape">Forma atual</string>
     <string name="pending_title">Neste momento</string>
-    <string name="reset_dot">Repor ponto</string>
     <string name="dev_post_hint">Toque, feche o telemóvel e olhe para o ecrã exterior.</string>
 </resources>

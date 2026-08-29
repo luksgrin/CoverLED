@@ -2,7 +2,6 @@
     <string name="app_name">CoverLED</string>
     <string name="test_channel">Test CoverLED</string>
     <string name="home_tagline">Une LED de notification pour l\'écran externe. Fermez le téléphone : un point coloré indique ce qui attend.</string>
-    <string name="setup_title">Configuration</string>
     <string name="setup_notif_ok">Accès aux notifications accordé</string>
     <string name="setup_notif_missing">Accès aux notifications requis</string>
     <string name="setup_overlay_ok">« Superposition aux autres applis » accordée</string>
@@ -74,7 +73,6 @@
     <string name="position_center">Centre</string>
     <string name="position_top">Haut</string>
     <string name="position_bottom">Bas</string>
-    <string name="position_hint">⚡ la charge apparaît ici</string>
     <string name="color_red">Rouge</string>
     <string name="color_pink">Rose</string>
     <string name="color_purple">Violet</string>
@@ -93,10 +91,8 @@
     <string name="style_lubdub_help">Deux pulsations, comme un cœur</string>
     <string name="timing">Durées</string>
     <string name="display">Affichage</string>
-    <string name="arrangement">Disposition</string>
     <string name="size">Taille</string>
     <string name="current_shape">Forme actuelle</string>
     <string name="pending_title">En ce moment</string>
-    <string name="reset_dot">Réinitialiser le point</string>
     <string name="dev_post_hint">Touchez, fermez le téléphone et regardez l\'écran externe.</string>
 </resources>

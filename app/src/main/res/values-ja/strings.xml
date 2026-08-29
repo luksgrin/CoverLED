@@ -2,7 +2,6 @@
     <string name="app_name">CoverLED</string>
     <string name="test_channel">CoverLED テスト</string>
     <string name="home_tagline">カバー画面用の通知LED。閉じたままでも、色付きの点で何が待っているかわかります。</string>
-    <string name="setup_title">セットアップ</string>
     <string name="setup_notif_ok">通知へのアクセスが許可されています</string>
     <string name="setup_notif_missing">通知へのアクセスが必要です</string>
     <string name="setup_overlay_ok">「他のアプリの上に重ねて表示」が許可されています</string>
@@ -74,7 +73,6 @@
     <string name="position_center">中央</string>
     <string name="position_top">上</string>
     <string name="position_bottom">下</string>
-    <string name="position_hint">⚡ 充電情報はここに表示</string>
     <string name="color_red">赤</string>
     <string name="color_pink">ピンク</string>
     <string name="color_purple">紫</string>
@@ -93,10 +91,8 @@
     <string name="style_lubdub_help">心臓のように2回脈打つ</string>
     <string name="timing">タイミング</string>
     <string name="display">表示</string>
-    <string name="arrangement">配置</string>
     <string name="size">サイズ</string>
     <string name="current_shape">現在の形</string>
     <string name="pending_title">現在</string>
-    <string name="reset_dot">点をリセット</string>
     <string name="dev_post_hint">タップして端末を閉じ、カバー画面を確認してください。</string>
 </resources>

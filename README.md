@@ -119,9 +119,26 @@ adb shell am start -n dev.lucas.coverled/.MainActivity --ei autoshow 3   # force
 adb shell screencap -d <physical id> /sdcard/c.png   # id from: adb shell dumpsys display | grep uniqueId
 ```
 
-## Documents
-- [`docs/spec.md`](docs/spec.md) — original specification, revised as the design changed
-- [`docs/device-test-results.md`](docs/device-test-results.md) — what was verified on the device, and how
+## Device notes
+
+Facts established on real hardware (Android 16), useful when adding another generation:
+
+| | Z Flip5 · One UI 8.0 | Z Flip7 · One UI 8.5 |
+|---|---|---|
+| Cover display | id 1 · 748×720 · density 340 | id 1 · 948×1048 · density 420 |
+| Camera cutout (cover) | bottom-right `(379,654)–(748,720)`, inset 66 px | bottom-right `(428,828)–(948,1048)`, inset 220 px |
+| Background launch from the listener | blocked (`BAL_BLOCK`, procstate `BOUND_FOREGROUND_SERVICE`) until `SYSTEM_ALERT_WINDOW` is granted → `BAL_ALLOW_VISIBLE_WINDOW` | same; reason reported as `BAL_ALLOW_SAW_PERMISSION` |
+| Good Lock / MultiStar needed | no | no |
+
+Other things learned the hard way:
+- `DisplayManager.getDisplays()` can omit the cover display while it is off — also query
+  `DISPLAY_CATEGORY_PRESENTATION` and `getDisplay(1)` (see `CoverDisplays.kt`).
+- The cover has a 5 s screen timeout; `FLAG_KEEP_SCREEN_ON` on the indicator is what keeps it lit.
+- After a side-key wake, Samsung's lock screen / charging AOD sits above the indicator and it never
+  resumes by itself — hence the snooze / re-show logic in `IndicatorCoordinator`.
+- `DeviceStateManager` and `NotificationListenerService.getNotificationChannel` are system APIs on
+  SDK 36; the hinge-angle sensor and `Notification.ledARGB`/`color` are the public substitutes.
+- `adb shell screencap -d` takes the *physical* display id (`uniqueId` in `dumpsys display`), not `1`.
 
 ## Languages
 The UI follows the system language. Included: English, Spanish, German, French, Italian, Portuguese,

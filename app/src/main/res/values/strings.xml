@@ -3,7 +3,6 @@
     <string name="test_channel">CoverLED test</string>
 
     <string name="home_tagline">A notification LED for the cover screen. Close the phone; a colored dot tells you what is waiting.</string>
-    <string name="setup_title">Setup</string>
     <string name="setup_notif_ok">Notification access granted</string>
     <string name="setup_notif_missing">Notification access needed</string>
     <string name="setup_overlay_ok">Display over other apps granted</string>
@@ -80,7 +79,6 @@
     <string name="position_center">Center</string>
     <string name="position_top">Top</string>
     <string name="position_bottom">Bottom</string>
-    <string name="position_hint">⚡ charging info appears here</string>
     <string name="color_red">Red</string>
     <string name="color_pink">Pink</string>
     <string name="color_purple">Purple</string>
@@ -99,10 +97,8 @@
     <string name="style_lubdub_help">Two pulses, like a heartbeat</string>
     <string name="timing">Timing</string>
     <string name="display">Display</string>
-    <string name="arrangement">Arrangement</string>
     <string name="size">Size</string>
     <string name="current_shape">Current shape</string>
     <string name="pending_title">Right now</string>
-    <string name="reset_dot">Reset dot</string>
     <string name="dev_post_hint">Tap, then close the phone and watch the cover.</string>
 </resources>
