@@ -115,12 +115,12 @@ class AppColors(private val context: Context) {
         val OTHERS_COLOR = Color.WHITE
         val DEFAULT_COLOR = Color.rgb(255, 152, 0)   // orange: "something else"
 
-        /** Choices offered in the editor (name → color). */
-        val PALETTE: List<Pair<String, Int>> = listOf(
-            "Red" to Color.rgb(244, 67, 54), "Pink" to Color.rgb(233, 30, 99), "Purple" to Color.rgb(156, 39, 176),
-            "Indigo" to Color.rgb(63, 81, 181), "Blue" to Color.rgb(33, 150, 243), "Cyan" to Color.rgb(0, 188, 212),
-            "Teal" to Color.rgb(0, 150, 136), "Green" to Color.rgb(76, 175, 80), "Lime" to Color.rgb(205, 220, 57),
-            "Yellow" to Color.rgb(255, 235, 59), "Orange" to Color.rgb(255, 152, 0), "White" to Color.WHITE,
+        /** Choices offered in the editor (string resource → color). */
+        val PALETTE: List<Pair<Int, Int>> = listOf(
+            R.string.color_red to Color.rgb(244, 67, 54), R.string.color_pink to Color.rgb(233, 30, 99), R.string.color_purple to Color.rgb(156, 39, 176),
+            R.string.color_indigo to Color.rgb(63, 81, 181), R.string.color_blue to Color.rgb(33, 150, 243), R.string.color_cyan to Color.rgb(0, 188, 212),
+            R.string.color_teal to Color.rgb(0, 150, 136), R.string.color_green to Color.rgb(76, 175, 80), R.string.color_lime to Color.rgb(205, 220, 57),
+            R.string.color_yellow to Color.rgb(255, 235, 59), R.string.color_orange to Color.rgb(255, 152, 0), R.string.color_white to Color.WHITE,
         )
         private val PRIORITY = listOf(
             "com.samsung.android.dialer", "com.google.android.dialer",

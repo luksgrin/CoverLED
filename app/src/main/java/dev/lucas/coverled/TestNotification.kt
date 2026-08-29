@@ -16,8 +16,8 @@ object TestNotification {
         nm.createNotificationChannel(NotificationChannel(CHANNEL, context.getString(R.string.test_channel), NotificationManager.IMPORTANCE_DEFAULT))
         val n = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_dot)
-            .setContentTitle("CoverLED test")
-            .setContentText("If the LED works, a dot is on the cover now.")
+            .setContentTitle(context.getString(R.string.test_notif_title))
+            .setContentText(context.getString(R.string.test_notif_text))
             .setAutoCancel(true)
             .build()
         runCatching { nm.notify(ID, n) }

@@ -52,8 +52,8 @@ class MainActivity : AppCompatActivity() {
                 NotificationState.get(this@MainActivity).snapshot.collect { snap ->
                     val colors = AppColors(this@MainActivity)
                     findViewById<TextView>(R.id.txtState).text =
-                        if (snap.isEmpty()) "Nothing pending right now."
-                        else "Pending: " + snap.keys.joinToString { colors.label(it) }
+                        if (snap.isEmpty()) getString(R.string.pending_none)
+                        else getString(R.string.pending_list, snap.keys.joinToString { colors.label(it) })
                 }
             }
         }

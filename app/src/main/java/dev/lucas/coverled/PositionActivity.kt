@@ -36,14 +36,14 @@ class PositionActivity : AppCompatActivity() {
             setNavigationOnClickListener { finish() }
         }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { leftMargin = -dp(16); rightMargin = -dp(16) })
         root.addView(TextView(this).apply {
-            text = "Drag the dot to where you want it on the cover screen. Close the phone (or peek at the cover) to see the live preview."
+            text = getString(R.string.position_intro)
         })
         preview = CoverPreview(this)
         root.addView(preview, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { topMargin = dp(16); bottomMargin = dp(16) })
         val buttons = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        buttons.addView(Button(this).apply { text = "Center"; setOnClickListener { preview.set(0.5f, 0.5f) } }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        buttons.addView(Button(this).apply { text = "Top"; setOnClickListener { preview.set(0.5f, 0.15f) } }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        buttons.addView(Button(this).apply { text = "Bottom"; setOnClickListener { preview.set(0.5f, 0.8f) } }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        buttons.addView(Button(this).apply { text = getString(R.string.position_center); setOnClickListener { preview.set(0.5f, 0.5f) } }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        buttons.addView(Button(this).apply { text = getString(R.string.position_top); setOnClickListener { preview.set(0.5f, 0.15f) } }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        buttons.addView(Button(this).apply { text = getString(R.string.position_bottom); setOnClickListener { preview.set(0.5f, 0.8f) } }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         root.addView(buttons)
         setContentView(root)
     }
@@ -86,7 +86,7 @@ class PositionActivity : AppCompatActivity() {
             c.drawRoundRect(frame, r, r, paintFill)
             c.drawRoundRect(frame, r, r, paintFrame)
             c.drawCircle(frame.left + x * frame.width(), frame.top + y * frame.height(), dp(9).toFloat(), paintDot)
-            c.drawText("⚡ charging info appears here", frame.centerX(), frame.bottom - dp(14), paintHint)
+            c.drawText(getString(R.string.position_hint), frame.centerX(), frame.bottom - dp(14), paintHint)
         }
 
         override fun onTouchEvent(e: MotionEvent): Boolean {

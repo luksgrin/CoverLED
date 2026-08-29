@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="When several apps are waiting" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/layout_title" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/tgArrangement"
@@ -14,9 +14,9 @@
         android:layout_marginTop="6dp"
         app:selectionRequired="true"
         app:singleSelection="true">
-        <com.google.android.material.button.MaterialButton android:id="@+id/rbRow" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Row" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/rbGeometric" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Shape" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/rbCycle" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Cycle" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/rbRow" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/arr_row" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/rbGeometric" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/arr_shape" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/rbCycle" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/arr_cycle" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <TextView android:id="@+id/txtArrangementHelp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
@@ -26,5 +26,5 @@
     <TextView android:id="@+id/lblSize" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAppearance="?attr/textAppearanceBodyMedium" />
     <com.google.android.material.slider.Slider android:id="@+id/sbSize" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="8" android:valueTo="64" android:stepSize="1" />
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Up to 6 dots. Priority apps come first (see Apps); with more than 6 apps waiting the last dot is white and means “more”." android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="@string/layout_help" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
 </LinearLayout>

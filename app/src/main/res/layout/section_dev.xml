@@ -4,21 +4,21 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Test notifications" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/btnTestNotif" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Post test notification in 8 s (close the phone)" />
-    <com.google.android.material.button.MaterialButton android:id="@+id/btnCancelNotif" style="?attr/materialButtonOutlinedStyle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cancel test notification" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/dev_test_title" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnTestNotif" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="@string/dev_post_notif" />
+    <com.google.android.material.button.MaterialButton android:id="@+id/btnCancelNotif" style="?attr/materialButtonOutlinedStyle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/dev_cancel_notif" />
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Manual indicator (bypasses notifications)" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/dev_manual" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:orientation="horizontal">
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnShowNow" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="1 dot now" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnShowMulti" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="3 dots in 8 s" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnHide" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Hide" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnShowNow" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/dev_one_dot" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnShowMulti" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/dev_three_dots" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnHide" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/dev_hide" />
     </LinearLayout>
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Device" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/dev_device" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
     <TextView android:id="@+id/txtDisplays" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:fontFamily="monospace" android:textSize="11sp" />
     <TextView android:id="@+id/txtFold" android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:textSize="11sp" />
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Log" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/dev_log" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
     <TextView android:id="@+id/txtLog" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:fontFamily="monospace" android:textSize="11sp" />
 </LinearLayout>

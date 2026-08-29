@@ -121,6 +121,11 @@ adb shell screencap -d <physical id> /sdcard/c.png   # id from: adb shell dumpsy
 - [`docs/spec.md`](docs/spec.md) — original specification, revised as the design changed
 - [`docs/device-test-results.md`](docs/device-test-results.md) — what was verified on the device, and how
 
+## Languages
+The UI follows the system language. English and Spanish are included (`res/values/strings.xml`,
+`res/values-es/strings.xml`); the charging duration ("1 h 43 min") is formatted by ICU for any locale.
+To add a language, copy `values-es/strings.xml` to `values-<lang>/` and translate.
+
 ## Known limitations
 - Can't use Samsung's low-power AOD (system-only), so a pending dot keeps the cover panel on.
   Battery impact not yet measured overnight.

@@ -36,9 +36,7 @@ class ColorsActivity : AppCompatActivity() {
             setNavigationOnClickListener { finish() }
         })
         root.addView(TextView(this).apply {
-            text = "Apps appear here after their first notification. Tap a color to change it; " +
-                "Auto uses the color the app declares for its LED, else its accent, else its icon. " +
-                "Priority apps always get a dot (max ${Settings.MAX_DOTS}; a white dot means \"more\")."
+            text = getString(R.string.colors_intro, Settings.MAX_DOTS)
             setPadding(dp(16), dp(12), dp(16), dp(8))
         })
         adapter = Adapter()
@@ -56,8 +54,9 @@ class ColorsActivity : AppCompatActivity() {
     }
 
     private fun pickColor(pkg: String) {
-        val names = listOf("Auto (${colors.source(pkg).let { if (it == "custom") "reset" else it }})") +
-            AppColors.PALETTE.map { it.first }
+        val src = colors.source(pkg)
+        val names = listOf(getString(R.string.colors_auto, if (src == "custom") getString(R.string.src_reset) else sourceLabel(src))) +
+            AppColors.PALETTE.map { getString(it.first) }
         AlertDialog.Builder(this)
             .setTitle(colors.label(pkg))
             .setItems(names.toTypedArray()) { _, which ->
@@ -66,6 +65,10 @@ class ColorsActivity : AppCompatActivity() {
                 adapter.reload()
             }
             .show()
+    }
+
+    private fun sourceLabel(src: String) = when (src) {
+        "custom" -> getString(R.string.src_custom); "auto" -> getString(R.string.src_auto); else -> getString(R.string.src_default)
     }
 
     private inner class Adapter : BaseAdapter() {
@@ -96,8 +99,8 @@ class ColorsActivity : AppCompatActivity() {
                 addView(ImageView(context).apply { tag = "swatch"; setPadding(dp(8), dp(8), dp(8), dp(8)) })
                 addView(LinearLayout(context).apply {
                     orientation = LinearLayout.VERTICAL
-                    addView(CheckBox(context).apply { tag = "priority"; text = "Priority" })
-                    addView(CheckBox(context).apply { tag = "ignore"; text = "Ignore" })
+                    addView(CheckBox(context).apply { tag = "priority"; text = getString(R.string.priority) })
+                    addView(CheckBox(context).apply { tag = "ignore"; text = getString(R.string.ignore) })
                 })
             }
             row.findViewWithTag<ImageView>("icon").setImageDrawable(
@@ -105,7 +108,7 @@ class ColorsActivity : AppCompatActivity() {
             )
             row.findViewWithTag<TextView>("label").text = colors.label(pkg)
             val ignored = colors.isIgnored(pkg)
-            row.findViewWithTag<TextView>("sub").text = "$pkg · ${colors.source(pkg)}${if (ignored) " · ignored" else ""}"
+            row.findViewWithTag<TextView>("sub").text = "$pkg · ${sourceLabel(colors.source(pkg))}${if (ignored) " · ${getString(R.string.ignored)}" else ""}"
             row.findViewWithTag<ImageView>("swatch").apply {
                 setImageDrawable(swatch(colors.colorFor(pkg)))
                 alpha = if (ignored) 0.3f else 1f

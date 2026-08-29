@@ -238,14 +238,24 @@ class CoverIndicatorActivity : AppCompatActivity() {
         val remainMs = bm?.computeChargeTimeRemaining() ?: -1L
         val remain = when {
             status == BatteryManager.BATTERY_STATUS_FULL -> getString(R.string.battery_full)
-            remainMs > 0 -> {
-                val m = remainMs / 60_000
-                if (m >= 60) getString(R.string.battery_hm, m / 60, m % 60) else getString(R.string.battery_m, m)
-            }
+            remainMs > 0 -> getString(R.string.battery_to_full, formatDuration(remainMs))
             else -> ""
         }
         battery.text = if (remain.isEmpty()) "⚡ $pct %" else "⚡ $pct %  ·  $remain"
         battery.visibility = TextView.VISIBLE
+    }
+
+    /** "1 h 43 min" in the system language, via ICU (no per-language strings needed). */
+    private fun formatDuration(ms: Long): String {
+        val total = ms / 60_000
+        val h = total / 60; val m = total % 60
+        val fmt = android.icu.text.MeasureFormat.getInstance(
+            resources.configuration.locales[0], android.icu.text.MeasureFormat.FormatWidth.SHORT)
+        val measures = buildList {
+            if (h > 0) add(android.icu.util.Measure(h, android.icu.util.MeasureUnit.HOUR))
+            add(android.icu.util.Measure(m, android.icu.util.MeasureUnit.MINUTE))
+        }
+        return fmt.formatMeasures(*measures.toTypedArray())
     }
 
     override fun onDestroy() {

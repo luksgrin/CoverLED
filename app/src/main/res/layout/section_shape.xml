@@ -17,10 +17,10 @@
     <TextView android:id="@+id/txtShape" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:gravity="center" android:textAppearance="?attr/textAppearanceBodyMedium" />
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:orientation="horizontal">
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnShape" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginEnd="6dp" android:text="Load PNG…" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnShapeClear" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="6dp" android:text="Use circle" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnShape" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginEnd="6dp" android:text="@string/shape_load" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnShapeClear" style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="6dp" android:text="@string/shape_circle" />
     </LinearLayout>
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Rules for a custom shape" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:lineSpacingExtra="4dp" android:text="• PNG with a transparent background — the transparent part is the outside of the shape\n• Draw in white; gray is dimmer. The file is tinted with each app's color\n• At most 1024 × 1024 px and 2 MB; a square canvas fits best\n• Stored downscaled to 128 × 128 in the app's private storage" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="@string/shape_rules_title" android:textAppearance="?attr/textAppearanceLabelLarge" android:textColor="?attr/colorPrimary" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:lineSpacingExtra="4dp" android:text="@string/shape_rules" android:textAppearance="?attr/textAppearanceBodySmall" android:textColor="?attr/colorOnSurfaceVariant" />
 </LinearLayout>

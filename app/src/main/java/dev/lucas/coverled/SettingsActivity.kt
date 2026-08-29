@@ -80,18 +80,18 @@ class SettingsActivity : AppCompatActivity() {
                 if (checked) st.beatStyle = when (id) { R.id.rbHard -> Prefs.STYLE_HARD; R.id.rbLubdub -> Prefs.STYLE_LUBDUB; else -> Prefs.STYLE_BREATHE }
             }
         }
-        slider(R.id.sbBlinkOn, R.id.lblBlinkOn, st.blinkOnMs.toFloat(), { "Beat length: ${it.toInt()} ms" }) { st.blinkOnMs = it.toInt() }
-        slider(R.id.sbBlinkOff, R.id.lblBlinkOff, st.blinkOffMs.toFloat(), { "Dark gap: ${it.toInt()} ms" }) { st.blinkOffMs = it.toInt() }
-        slider(R.id.sbBrightness, R.id.lblBrightness, (st.brightness * 100).toInt().toFloat(), { "Brightness: ${it.toInt()} %" }) { st.brightness = it / 100f }
+        slider(R.id.sbBlinkOn, R.id.lblBlinkOn, st.blinkOnMs.toFloat(), { getString(R.string.beat_length, it.toInt()) }) { st.blinkOnMs = it.toInt() }
+        slider(R.id.sbBlinkOff, R.id.lblBlinkOff, st.blinkOffMs.toFloat(), { getString(R.string.dark_gap, it.toInt()) }) { st.blinkOffMs = it.toInt() }
+        slider(R.id.sbBrightness, R.id.lblBrightness, (st.brightness * 100).toInt().toFloat(), { getString(R.string.brightness, it.toInt()) }) { st.brightness = it / 100f }
     }
 
     // ---------------------------------------------------------------- layout & size
     private fun bindLayout() {
         val help = findViewById<TextView>(R.id.txtArrangementHelp)
         fun describe(a: String) = when (a) {
-            Prefs.ARR_ROW -> "Dots side by side."
-            Prefs.ARR_CYCLE -> "One dot; every beat it takes the next app's color."
-            else -> "2 pair · 3 triangle · 4 square · 5 pentagon · 6 hexagon."
+            Prefs.ARR_ROW -> getString(R.string.arr_row_help)
+            Prefs.ARR_CYCLE -> getString(R.string.arr_cycle_help)
+            else -> getString(R.string.arr_shape_help)
         }
         help.text = describe(st.arrangement)
         findViewById<MaterialButtonToggleGroup>(R.id.tgArrangement).apply {
@@ -102,7 +102,7 @@ class SettingsActivity : AppCompatActivity() {
                 help.text = describe(st.arrangement)
             }
         }
-        slider(R.id.sbSize, R.id.lblSize, st.dotSizeDp.toFloat(), { "Dot size: ${it.toInt()} dp" }) { st.dotSizeDp = it.toInt() }
+        slider(R.id.sbSize, R.id.lblSize, st.dotSizeDp.toFloat(), { getString(R.string.dot_size, it.toInt()) }) { st.dotSizeDp = it.toInt() }
     }
 
     // ---------------------------------------------------------------- shape
@@ -118,12 +118,12 @@ class SettingsActivity : AppCompatActivity() {
         val bmp = if (st.customShape) ShapeLoader.load(this) else null
         if (bmp != null) {
             img.setImageBitmap(bmp); img.setColorFilter(AppColors.DEFAULT_COLOR, android.graphics.PorterDuff.Mode.MULTIPLY)
-            txt.text = "Custom shape, tinted with each app's color"
+            txt.text = getString(R.string.shape_custom)
         } else {
             img.setImageDrawable(getDrawable(R.drawable.ic_dot)); img.clearColorFilter()
-            txt.text = "Circle"
+            txt.text = getString(R.string.shape_is_circle)
         }
-        if (error != null) txt.text = "Rejected: $error"
+        if (error != null) txt.text = getString(R.string.shape_rejected, error)
     }
 
     // ---------------------------------------------------------------- developer
