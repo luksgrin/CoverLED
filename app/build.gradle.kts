@@ -41,4 +41,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     // Fold-state detection (FoldingFeature)
     implementation("androidx.window:window:1.4.0")
+    // Dominant-color extraction from app icons
+    implementation("androidx.palette:palette-ktx:1.0.0")
 }

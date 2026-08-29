@@ -26,6 +26,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ColorsActivity"
+            android:exported="false"
+            android:label="App colors" />
+
         <!--
           The LED itself. Launched on the cover display (see CoverDisplays.kt).
           showWhenLocked / turnScreenOn are also set programmatically for older paths.

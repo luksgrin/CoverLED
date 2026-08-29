@@ -130,6 +130,8 @@ Example:
 
 The initial prototype should support a simple configurable mapping.
 
+*Implemented (2026-08-30):* user override → notification `ledARGB` (what the Galaxy LED honored) → notification accent color → dominant icon color (Palette) → default orange. `NotificationChannel.lightColor` is a system-only API for listeners and cannot be used.
+
 ## 3.4 External-screen indicator
 
 The application shall display notification status on the cover display via an indicator activity (see §5).

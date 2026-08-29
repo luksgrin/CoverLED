@@ -3,7 +3,7 @@
 Spec: [`samsung_z_flip_notification_led_spec.md`](samsung_z_flip_notification_led_spec.md)
 
 **Target device:** Galaxy Z Flip5 · Android 16 · One UI 8.0
-**Status:** Phases 1–9 ✅ working end-to-end on device (see [`PHASE2_RESULTS.md`](PHASE2_RESULTS.md)). Phase 10 polish in progress: blink duty cycle + brightness ✅, per-app colors UI ⏳, overnight battery measurement ⏳.
+**Status:** Phases 1–9 ✅ working end-to-end on device (see [`PHASE2_RESULTS.md`](PHASE2_RESULTS.md)). Phase 10 polish: blink duty cycle + brightness ✅, per-app colors + ignore list ✅, overnight battery measurement ⏳.
 
 ## How it works
 
@@ -23,7 +23,8 @@ Android notifications ─▶ LedNotificationListener ─▶ NotificationState (p
 app/src/main/java/dev/lucas/coverled/
   LedNotificationListener.kt  NotificationListenerService; hosts the coordinator
   NotificationState.kt        pending notifications per package (SharedPreferences, no content)
-  AppColors.kt                package → color defaults + priority
+  AppColors.kt                package → color (user / learned / icon), ignore list, seen apps
+  ColorsActivity.kt           per-app color editor + ignore list
   FoldState.kt                closed/open via TYPE_HINGE_ANGLE
   IndicatorCoordinator.kt     show/hide decision, re-show after screen-off
   IndicatorController.kt      launches/hides the indicator on the cover display
@@ -46,6 +47,14 @@ app/src/main/java/dev/lucas/coverled/
 | get a *new* notification while hidden | comes back immediately |
 | open the phone | disappears; returns when you close it (hinge < 15°) |
 | plug in the charger | adds "⚡ 79 % · 36 min to full" under the dot (toggle in settings) |
+
+### Colors
+Like the original Galaxy LED, the color comes from the app when possible. Resolution order per app:
+**your choice** (App colors screen) → color the notification declares for the LED (`ledARGB`, legacy) →
+the notification's accent color → dominant/vibrant color of the app icon → orange. Auto results are
+cached per app; "Auto" in the editor resets them. Apps show up in the editor after their first
+notification; tick **Ignore** to keep an app from lighting the LED.
+(Channel light colors are a system-only API, so they can't be read by a third-party listener.)
 
 ### Power settings (in the app)
 - **Blink** (default on): dots visible 0.8 s, dark 3 s; both adjustable. The battery line does not blink.

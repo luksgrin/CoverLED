@@ -1,38 +1,115 @@
 package dev.lucas.coverled
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
+import androidx.core.graphics.drawable.toBitmap
+import androidx.palette.graphics.Palette
 
 /**
- * Package → indicator color mapping (spec §3.3). Persisted in SharedPreferences so it can be
- * edited later from the UI; seeded with sensible defaults.
+ * Package → indicator color (spec §3.3), plus the ignore list.
+ *
+ * Resolution order, like the old Galaxy LED which honored the color the app declared:
+ *   1. user override            (prefs "user")
+ *   2. app-declared light color (NotificationChannel.lightColor / Notification.ledARGB) → cached in "auto"
+ *   3. app accent color         (Notification.color)                                    → cached in "auto"
+ *   4. dominant color of the launcher icon (Palette)                                    → cached in "auto"
+ *   5. DEFAULT_COLOR
  */
-class AppColors(context: Context) {
-    private val prefs = context.getSharedPreferences("app_colors", Context.MODE_PRIVATE)
+class AppColors(private val context: Context) {
+    private val user = context.getSharedPreferences("colors_user", Context.MODE_PRIVATE)
+    private val auto = context.getSharedPreferences("colors_auto", Context.MODE_PRIVATE)
+    private val meta = context.getSharedPreferences("colors_meta", Context.MODE_PRIVATE)
 
-    fun colorFor(pkg: String): Int =
-        prefs.getInt(pkg, DEFAULTS[pkg] ?: DEFAULT_COLOR)
+    // ---- colors -------------------------------------------------------------------------
 
-    fun set(pkg: String, color: Int) = prefs.edit().putInt(pkg, color).apply()
+    fun colorFor(pkg: String): Int = when {
+        user.contains(pkg) -> user.getInt(pkg, DEFAULT_COLOR)
+        auto.contains(pkg) -> auto.getInt(pkg, DEFAULT_COLOR)
+        else -> iconColor(pkg)?.also { auto.edit().putInt(pkg, it).apply() } ?: DEFAULT_COLOR
+    }
 
-    /** Priority for the single-dot mode: lower = more important. Unknown apps go last. */
+    fun userColor(pkg: String): Int? = if (user.contains(pkg)) user.getInt(pkg, 0) else null
+    fun setUserColor(pkg: String, color: Int?) =
+        user.edit().apply { if (color == null) remove(pkg) else putInt(pkg, color) }.apply()
+
+    /** Called by the listener with what the notification itself declares (0 = nothing). */
+    fun learnFromNotification(pkg: String, lightColor: Int, accentColor: Int) {
+        if (auto.contains(pkg)) return
+        val c = firstUsable(lightColor, accentColor) ?: return
+        auto.edit().putInt(pkg, c).apply()
+        Log.i(TAG, "learned color for $pkg from notification: #${Integer.toHexString(c)}")
+    }
+
+    fun source(pkg: String): String = when {
+        user.contains(pkg) -> "custom"
+        auto.contains(pkg) -> "auto"
+        else -> "default"
+    }
+
+    fun resetAuto(pkg: String) = auto.edit().remove(pkg).apply()
+
+    private fun iconColor(pkg: String): Int? = runCatching {
+        val icon = context.packageManager.getApplicationIcon(pkg)
+        val bmp: Bitmap = icon.toBitmap(96, 96)
+        val p = Palette.from(bmp).clearFilters().generate()
+        val sw = p.vibrantSwatch ?: p.lightVibrantSwatch ?: p.darkVibrantSwatch ?: p.dominantSwatch
+        sw?.rgb?.let { boost(it) }
+    }.onFailure { Log.w(TAG, "icon color for $pkg failed: ${it.message}") }.getOrNull()
+
+    /** Make sure the dot reads well on black: bump saturation/value of dull picks. */
+    private fun boost(rgb: Int): Int {
+        val hsv = FloatArray(3); Color.colorToHSV(rgb, hsv)
+        if (hsv[1] < 0.35f) hsv[1] = 0.35f
+        if (hsv[2] < 0.75f) hsv[2] = 0.85f
+        return Color.HSVToColor(hsv)
+    }
+
+    private fun firstUsable(vararg colors: Int): Int? =
+        colors.firstOrNull { it != 0 && Color.alpha(it) > 0 && !isNearlyGray(it) }?.let { boost(it or 0xFF000000.toInt()) }
+
+    private fun isNearlyGray(c: Int): Boolean {
+        val hsv = FloatArray(3); Color.colorToHSV(c, hsv); return hsv[1] < 0.15f
+    }
+
+    // ---- ignore list & seen apps ------------------------------------------------------------
+
+    fun isIgnored(pkg: String) = meta.getStringSet(KEY_IGNORED, emptySet())!!.contains(pkg)
+    fun setIgnored(pkg: String, ignored: Boolean) {
+        val set = meta.getStringSet(KEY_IGNORED, emptySet())!!.toMutableSet()
+        if (ignored) set.add(pkg) else set.remove(pkg)
+        meta.edit().putStringSet(KEY_IGNORED, set).apply()
+    }
+
+    /** Packages that have ever posted a notification while we were listening (for the editor). */
+    fun seen(): Set<String> = meta.getStringSet(KEY_SEEN, emptySet())!!
+    fun markSeen(pkg: String) {
+        val set = meta.getStringSet(KEY_SEEN, emptySet())!!
+        if (pkg !in set) meta.edit().putStringSet(KEY_SEEN, set + pkg).apply()
+    }
+
+    fun label(pkg: String): String = runCatching {
+        context.packageManager.getApplicationLabel(context.packageManager.getApplicationInfo(pkg, 0)).toString()
+    }.getOrDefault(pkg)
+
+    /** Priority for ordering dots: lower = more important. Unknown apps go last. */
     fun priorityOf(pkg: String): Int = PRIORITY.indexOf(pkg).let { if (it < 0) PRIORITY.size else it }
 
     companion object {
+        private const val TAG = "CoverLED"
+        private const val KEY_IGNORED = "ignored"
+        private const val KEY_SEEN = "seen"
         val DEFAULT_COLOR = Color.rgb(255, 152, 0)   // orange: "something else"
 
-        val DEFAULTS: Map<String, Int> = mapOf(
-            "com.whatsapp" to Color.rgb(33, 150, 243),                  // blue
-            "com.google.android.gm" to Color.rgb(76, 175, 80),          // green
-            "com.google.android.calendar" to Color.rgb(156, 39, 176),   // purple
-            "com.samsung.android.calendar" to Color.rgb(156, 39, 176),
-            "com.samsung.android.dialer" to Color.rgb(244, 67, 54),     // red: missed call
-            "com.google.android.dialer" to Color.rgb(244, 67, 54),
-            "com.samsung.android.messaging" to Color.rgb(0, 188, 212),  // cyan: SMS
-            "com.google.android.apps.messaging" to Color.rgb(0, 188, 212),
-            "com.Slack" to Color.rgb(233, 30, 99),                      // pink
-            "org.telegram.messenger" to Color.rgb(3, 169, 244),
-            "dev.lucas.coverled" to Color.WHITE,                        // our own test notification
+        /** Choices offered in the editor (name → color). */
+        val PALETTE: List<Pair<String, Int>> = listOf(
+            "Red" to Color.rgb(244, 67, 54), "Pink" to Color.rgb(233, 30, 99), "Purple" to Color.rgb(156, 39, 176),
+            "Indigo" to Color.rgb(63, 81, 181), "Blue" to Color.rgb(33, 150, 243), "Cyan" to Color.rgb(0, 188, 212),
+            "Teal" to Color.rgb(0, 150, 136), "Green" to Color.rgb(76, 175, 80), "Lime" to Color.rgb(205, 220, 57),
+            "Yellow" to Color.rgb(255, 235, 59), "Orange" to Color.rgb(255, 152, 0), "White" to Color.WHITE,
         )
         private val PRIORITY = listOf(
             "com.samsung.android.dialer", "com.google.android.dialer",

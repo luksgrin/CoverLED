@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         if (intent.getBooleanExtra(EXTRA_CLEARALL, false)) LedNotificationListener.debugClearAll()
 
         bindSettings()
+        findViewById<Button>(R.id.btnColors).setOnClickListener { startActivity(Intent(this, ColorsActivity::class.java)) }
 
         findViewById<Button>(R.id.btnOverlay).setOnClickListener {
             startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))

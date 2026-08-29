@@ -71,6 +71,12 @@
             android:layout_height="wrap_content"
             android:text="Cancel test notification" />
 
+        <Button
+            android:id="@+id/btnColors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="App colors &amp; ignore list" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
