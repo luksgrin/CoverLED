@@ -38,7 +38,8 @@ app always gets a dot, or **Ignore** so it never does.
 - **Custom shape**: load your own PNG instead of a circle; it is tinted with each app's color.
   Rules: transparent background (that *is* the shape), drawn in **white** (gray = dimmer),
   ≤ 1024×1024 px, ≤ 2 MB, square canvas works best. Stored downscaled to 128×128 privately.
-- **Dot position**: drag the dot on a scaled outline of the cover, with a live preview on the real cover.
+- **Position**: drag the dot *and* the charging line on a scaled outline of the cover (camera cutout shown),
+  with a live preview on the real cover. Both stay clear of the camera automatically.
 
 ## Install and set up
 

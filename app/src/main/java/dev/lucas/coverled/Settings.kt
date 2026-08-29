@@ -58,7 +58,17 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(KEY_BATTERY, true)
         set(v) = prefs.edit().putBoolean(KEY_BATTERY, v).apply()
 
+    /** Charging-line position as fractions of width/height (0..1). Default: bottom center. */
+    var batteryX: Float
+        get() = prefs.getFloat(KEY_BAT_X, 0.5f)
+        set(v) = prefs.edit().putFloat(KEY_BAT_X, v.coerceIn(0f, 1f)).apply()
+    var batteryY: Float
+        get() = prefs.getFloat(KEY_BAT_Y, 0.9f)
+        set(v) = prefs.edit().putFloat(KEY_BAT_Y, v.coerceIn(0f, 1f)).apply()
+
     companion object {
+        const val KEY_BAT_X = "battery_x"
+        const val KEY_BAT_Y = "battery_y"
         const val KEY_BLINK = "blink"
         const val KEY_STYLE = "beat_style"
         const val KEY_DOT_X = "dot_x"

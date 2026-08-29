@@ -48,6 +48,18 @@ class CoverIndicatorActivity : AppCompatActivity() {
 
     private lateinit var dots: DotView
     private lateinit var battery: TextView
+    private lateinit var root: FrameLayout
+
+    /** Center the label on (batteryX, batteryY) of the cutout-free area, clamped to stay inside it. */
+    private fun placeBattery(root: FrameLayout) {
+        if (battery.width == 0) return
+        val areaW = root.width - root.paddingLeft - root.paddingRight
+        val areaH = root.height - root.paddingTop - root.paddingBottom
+        val x = (settings.batteryX * areaW - battery.width / 2f).coerceIn(0f, (areaW - battery.width).toFloat().coerceAtLeast(0f))
+        val y = (settings.batteryY * areaH - battery.height / 2f).coerceIn(0f, (areaH - battery.height).toFloat().coerceAtLeast(0f))
+        battery.translationX = x
+        battery.translationY = y
+    }
     private lateinit var settings: Settings
     private val handler = Handler(Looper.getMainLooper())
     private var chargingIntent: Intent? = null
@@ -150,10 +162,10 @@ class CoverIndicatorActivity : AppCompatActivity() {
             visibility = TextView.GONE
         }
         root.addView(dots, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        root.addView(battery, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            bottomMargin = (28 * resources.displayMetrics.density).toInt()
-        })
+        root.addView(battery, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        root.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> placeBattery(root) }
+        battery.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> placeBattery(root) }
+        this.root = root
         setContentView(root)
         // Keep everything clear of the camera cutout (Flip7: cameras punch into the cover panel).
         androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
@@ -196,6 +208,7 @@ class CoverIndicatorActivity : AppCompatActivity() {
         window.attributes = window.attributes.apply { screenBrightness = settings.brightness }
         dots.posX = settings.dotX
         dots.posY = settings.dotY
+        if (::root.isInitialized) placeBattery(root)
         dots.dotDp = settings.dotSizeDp.toFloat()
         dots.geometric = settings.arrangement == Settings.ARR_GEOMETRIC
         dots.shape = if (settings.customShape) ShapeLoader.load(this) else null

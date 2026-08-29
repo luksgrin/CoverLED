@@ -76,7 +76,7 @@
     <string name="ignored">ignored</string>
     <string name="priority">Priority</string>
     <string name="ignore">Ignore</string>
-    <string name="position_intro">Drag the dot to where you want it on the cover screen. Close the phone (or peek at the cover) to see the live preview.</string>
+    <string name="position_intro">Drag the dot — and the charging line — to where you want them on the cover screen. The darker band is the camera. Close the phone (or peek at the cover) to see the live preview.</string>
     <string name="position_center">Center</string>
     <string name="position_top">Top</string>
     <string name="position_bottom">Bottom</string>
@@ -93,4 +93,5 @@
     <string name="color_yellow">Yellow</string>
     <string name="color_orange">Orange</string>
     <string name="color_white">White</string>
+    <string name="position_reset_battery">Reset charging line</string>
 </resources>
