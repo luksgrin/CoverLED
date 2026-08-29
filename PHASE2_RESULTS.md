@@ -66,6 +66,7 @@ Fix — "LED yields to the user" model in `IndicatorCoordinator`: tap on the dot
 new notification → un-snooze. Hinge sensor at UI rate, closed threshold 15°. Verified over adb (see README table).
 
 ## Still open
-- Overnight battery measurement; duty cycle / auto-dim not implemented.
+- Overnight battery measurement still pending. Blink duty cycle (0.8 s on / 3 s off default) and adjustable
+  brightness implemented in `Settings.kt` / `CoverIndicatorActivity` — measure with blink on vs off.
 - `setTurnScreenOn` waking the main display — re-check when the launch comes from the listener (no MainActivity involved). Not observed in the adb-driven e2e runs (`display 0 … OFF` in logs), so likely a debug-path artifact.
 - Per-app color editing UI; ignore-list for apps.

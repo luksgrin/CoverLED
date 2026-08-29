@@ -75,7 +75,62 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Manual indicator (Phase 2 debug)"
+            android:text="Indicator settings"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/swBlink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Blink (saves battery)" />
+
+        <TextView
+            android:id="@+id/lblBlinkOn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="On time" />
+
+        <SeekBar
+            android:id="@+id/sbBlinkOn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="28" />
+
+        <TextView
+            android:id="@+id/lblBlinkOff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Off time" />
+
+        <SeekBar
+            android:id="@+id/sbBlinkOff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="29" />
+
+        <TextView
+            android:id="@+id/lblBrightness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Brightness" />
+
+        <SeekBar
+            android:id="@+id/sbBrightness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="99" />
+
+        <Switch
+            android:id="@+id/swBattery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show charging info under the dot" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Manual indicator (debug)"
             android:textStyle="bold" />
 
         <Button

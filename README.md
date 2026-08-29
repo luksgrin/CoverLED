@@ -3,7 +3,7 @@
 Spec: [`samsung_z_flip_notification_led_spec.md`](samsung_z_flip_notification_led_spec.md)
 
 **Target device:** Galaxy Z Flip5 · Android 16 · One UI 8.0
-**Status:** Phases 1–7 ✅ working end-to-end on device (see [`PHASE2_RESULTS.md`](PHASE2_RESULTS.md)). Next: Phase 8 polish (battery/duty cycle, colors UI), Phase 9 tap.
+**Status:** Phases 1–9 ✅ working end-to-end on device (see [`PHASE2_RESULTS.md`](PHASE2_RESULTS.md)). Phase 10 polish in progress: blink duty cycle + brightness ✅, per-app colors UI ⏳, overnight battery measurement ⏳.
 
 ## How it works
 
@@ -30,7 +30,8 @@ app/src/main/java/dev/lucas/coverled/
   CoverDisplays.kt            resolves the cover display
   CoverIndicatorActivity.kt   the LED (+ charging info while plugged in)
   DotView.kt                  draws the dots
-  MainActivity.kt             setup buttons + debug console
+  Settings.kt                 blink / brightness / battery-line preferences
+  MainActivity.kt             setup buttons, settings, debug console
 ```
 
 ## Behavior (LED semantics)
@@ -44,7 +45,13 @@ app/src/main/java/dev/lucas/coverled/
 | leave the cover alone until it sleeps | comes back ~2 s after the screen goes dark |
 | get a *new* notification while hidden | comes back immediately |
 | open the phone | disappears; returns when you close it (hinge < 15°) |
-| plug in the charger | adds "⚡ 79 % · 36 min to full" under the dot |
+| plug in the charger | adds "⚡ 79 % · 36 min to full" under the dot (toggle in settings) |
+
+### Power settings (in the app)
+- **Blink** (default on): dots visible 0.8 s, dark 3 s; both adjustable. The battery line does not blink.
+- **Brightness** (default 5 %): window brightness while the LED is showing.
+Changes apply live to a visible LED. Note the panel itself stays on while a dot is pending — this is
+not Samsung's low-power AOD — so blink + low brightness are what keep the cost down.
 
 ## First-run setup on the phone
 Open CoverLED and tap **Grant notification access** and **Allow display over other apps**

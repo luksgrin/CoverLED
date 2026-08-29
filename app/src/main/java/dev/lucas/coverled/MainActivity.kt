@@ -12,6 +12,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
+import android.widget.SeekBar
+import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -77,6 +79,8 @@ class MainActivity : AppCompatActivity() {
         if (intent.hasExtra(EXTRA_AUTOSHOW)) handleAutoshow(intent.getIntExtra(EXTRA_AUTOSHOW, 1))
         if (intent.hasExtra(EXTRA_TESTNOTIF)) testNotification(intent.getIntExtra(EXTRA_TESTNOTIF, 1) > 0)
         if (intent.getBooleanExtra(EXTRA_CLEARALL, false)) LedNotificationListener.debugClearAll()
+
+        bindSettings()
 
         findViewById<Button>(R.id.btnOverlay).setOnClickListener {
             startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
@@ -146,6 +150,44 @@ class MainActivity : AppCompatActivity() {
             .build()
         runCatching { nm.notify(TEST_ID, n); log("test notification posted") }
             .onFailure { log("post failed: ${it.message}") }
+    }
+
+    private fun bindSettings() {
+        val st = Settings(this)
+        val lblOn = findViewById<TextView>(R.id.lblBlinkOn)
+        val lblOff = findViewById<TextView>(R.id.lblBlinkOff)
+        val lblBr = findViewById<TextView>(R.id.lblBrightness)
+
+        findViewById<Switch>(R.id.swBlink).apply {
+            isChecked = st.blinkEnabled
+            setOnCheckedChangeListener { _, v -> st.blinkEnabled = v }
+        }
+        findViewById<Switch>(R.id.swBattery).apply {
+            isChecked = st.showBattery
+            setOnCheckedChangeListener { _, v -> st.showBattery = v }
+        }
+        // on: 200..3000 ms in 100 ms steps (0..28); off: 500..15000 ms in 500 ms steps (0..29)
+        findViewById<SeekBar>(R.id.sbBlinkOn).apply {
+            progress = (st.blinkOnMs - 200) / 100
+            lblOn.text = "On time: ${st.blinkOnMs} ms"
+            setOnSeekBarChangeListener(onChange { p -> st.blinkOnMs = 200 + p * 100; lblOn.text = "On time: ${st.blinkOnMs} ms" })
+        }
+        findViewById<SeekBar>(R.id.sbBlinkOff).apply {
+            progress = (st.blinkOffMs - 500) / 500
+            lblOff.text = "Off time: ${st.blinkOffMs} ms"
+            setOnSeekBarChangeListener(onChange { p -> st.blinkOffMs = 500 + p * 500; lblOff.text = "Off time: ${st.blinkOffMs} ms" })
+        }
+        findViewById<SeekBar>(R.id.sbBrightness).apply {
+            progress = (st.brightness * 100).toInt() - 1
+            lblBr.text = "Brightness: ${(st.brightness * 100).toInt()} %"
+            setOnSeekBarChangeListener(onChange { p -> st.brightness = (p + 1) / 100f; lblBr.text = "Brightness: ${p + 1} %" })
+        }
+    }
+
+    private fun onChange(f: (Int) -> Unit) = object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(sb: SeekBar, p: Int, fromUser: Boolean) { if (fromUser) f(p) }
+        override fun onStartTrackingTouch(sb: SeekBar) {}
+        override fun onStopTrackingTouch(sb: SeekBar) {}
     }
 
     private fun handleAutoshow(n: Int) {

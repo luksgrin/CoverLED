@@ -6,7 +6,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.BatteryManager
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
@@ -38,6 +42,20 @@ class CoverIndicatorActivity : AppCompatActivity() {
 
     private lateinit var dots: DotView
     private lateinit var battery: TextView
+    private lateinit var settings: Settings
+    private val handler = Handler(Looper.getMainLooper())
+    private var chargingIntent: Intent? = null
+
+    // Duty cycle: dots visible for blinkOnMs, dark for blinkOffMs. Battery text is not blinked.
+    private val blink = object : Runnable {
+        override fun run() {
+            val on = dots.visibility != View.VISIBLE
+            dots.visibility = if (on) View.VISIBLE else View.INVISIBLE
+            handler.postDelayed(this, (if (on) settings.blinkOnMs else settings.blinkOffMs).toLong())
+        }
+    }
+
+    private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> applySettings() }
 
     private val hideReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -56,8 +74,8 @@ class CoverIndicatorActivity : AppCompatActivity() {
 
         setShowWhenLocked(true)
         setTurnScreenOn(true)
+        settings = Settings(this)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        window.attributes = window.attributes.apply { screenBrightness = 0.05f }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsControllerCompat(window, window.decorView).apply {
@@ -104,12 +122,28 @@ class CoverIndicatorActivity : AppCompatActivity() {
         super.onStart()
         // Sticky broadcast: registering returns the current battery status immediately.
         registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.let { renderBattery(it) }
+        settings.prefs.registerOnSharedPreferenceChangeListener(prefListener)
+        applySettings()
     }
 
     override fun onStop() {
         runCatching { unregisterReceiver(batteryReceiver) }
+        settings.prefs.unregisterOnSharedPreferenceChangeListener(prefListener)
+        handler.removeCallbacks(blink)
         super.onStop()
         Log.i(TAG, "Indicator onStop")
+    }
+
+    private fun applySettings() {
+        window.attributes = window.attributes.apply { screenBrightness = settings.brightness }
+        handler.removeCallbacks(blink)
+        if (settings.blinkEnabled) {
+            dots.visibility = View.VISIBLE
+            handler.postDelayed(blink, settings.blinkOnMs.toLong())
+        } else {
+            dots.visibility = View.VISIBLE
+        }
+        chargingIntent?.let { renderBattery(it) }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -122,6 +156,8 @@ class CoverIndicatorActivity : AppCompatActivity() {
     }
 
     private fun renderBattery(i: Intent) {
+        chargingIntent = i
+        if (!settings.showBattery) { battery.visibility = TextView.GONE; return }
         val status = i.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
         val charging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
         if (!charging) { battery.visibility = TextView.GONE; return }
