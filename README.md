@@ -3,7 +3,8 @@
 Older Galaxy phones had a notification LED: glance at the closed phone, know something is waiting,
 guess the app from the color. CoverLED brings that back on the Galaxy Z Flip's cover screen.
 
-**Tested on:** Galaxy Z Flip5 · Android 16 · One UI 8.0. No root, no Good Lock / MultiStar.
+**Tested on:** Galaxy Z Flip5 (Android 16, One UI 8.0) and Galaxy Z Flip7 (Android 16, One UI 8.5).
+No root, no Good Lock / MultiStar.
 
 ## What it does
 
@@ -66,7 +67,7 @@ Android notifications ─▶ LedNotificationListener ─▶ NotificationState (p
                        CoverIndicatorActivity on the cover display (showWhenLocked, black, dots)
 ```
 
-- The cover screen is a second Android display (id 1, 748×720 on the Flip5). The indicator is a
+- The cover screen is a second Android display (id 1; 748×720 on the Flip5, 948×1048 on the Flip7). The indicator is a
   black full-screen activity launched there with `ActivityOptions.setLaunchDisplayId` +
   `showWhenLocked`/`turnScreenOn`. Samsung's own AOD is system-only, so the panel is fully on while a
   dot is pending; the black background, low brightness and blinking keep the cost down.
@@ -124,4 +125,4 @@ adb shell screencap -d <physical id> /sdcard/c.png   # id from: adb shell dumpsy
 - Can't use Samsung's low-power AOD (system-only), so a pending dot keeps the cover panel on.
   Battery impact not yet measured overnight.
 - Channel light colors are unreadable by third-party apps; colors fall back to accent/icon.
-- Tested on one device/firmware; other Z Flip generations may differ (display id, permissions).
+- Tested on Flip5 and Flip7 only; other generations may differ (display id, permissions).

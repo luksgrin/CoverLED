@@ -70,3 +70,19 @@ new notification → un-snooze. Hinge sensor at UI rate, closed threshold 15°. 
   brightness implemented in `Settings.kt` / `CoverIndicatorActivity` — measure with blink on vs off.
 - `setTurnScreenOn` waking the main display — re-check when the launch comes from the listener (no MainActivity involved). Not observed in the adb-driven e2e runs (`display 0 … OFF` in logs), so likely a debug-path artifact.
 - Per-app color editing UI; ignore-list for apps.
+
+
+---
+
+# Galaxy Z Flip7 (SM-F766Q) · Android 16 · One UI 8.5 — 2026-08-30
+
+Same APK as built for the Flip5, no code changes needed for the core path.
+
+| Check | Result |
+|---|---|
+| Displays | main 1080×2520 (id 0); cover **948×1048** (id 1), density 420, `FLAG_CAN_SHOW_WITH_INSECURE_KEYGUARD` present |
+| Fold detection | hinge sensor: 180° → open, 0° → closed ✅ |
+| Listener + permissions | `allow_listener` + `SYSTEM_ALERT_WINDOW` appop as on Flip5 ✅ |
+| Launch from listener, phone closed + locked | ✅ BAL reason now reported as `BAL_ALLOW_SAW_PERMISSION` (8.5 wording; Flip5/8.0 said `BAL_ALLOW_VISIBLE_WINDOW`) |
+| Dot + charging line rendered | ✅ |
+| Camera cutout | Cameras are **inside** the cover panel: cutout bounds `(428,828)–(948,1048)`, bottom inset 220 px. The charging line overlapped it → indicator now pads by the display-cutout insets (also helps Flip5, whose cutout is 66 px bottom-right). |

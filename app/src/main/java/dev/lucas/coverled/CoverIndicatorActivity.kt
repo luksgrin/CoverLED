@@ -155,6 +155,13 @@ class CoverIndicatorActivity : AppCompatActivity() {
             bottomMargin = (28 * resources.displayMetrics.density).toInt()
         })
         setContentView(root)
+        // Keep everything clear of the camera cutout (Flip7: cameras punch into the cover panel).
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val c = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            v.setPadding(c.left, c.top, c.right, c.bottom)
+            Log.i(TAG, "cutout insets l=${c.left} t=${c.top} r=${c.right} b=${c.bottom}")
+            insets
+        }
         applyIntent(intent)
 
         ContextCompat.registerReceiver(this, hideReceiver, IntentFilter(ACTION_HIDE), ContextCompat.RECEIVER_NOT_EXPORTED)
