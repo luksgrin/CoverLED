@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CoverLED — Phase 2 spike"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtDisplays"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="monospace"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/txtFold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="monospace"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/txtAccess"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="monospace"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnAccess"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Grant notification access" />
+
+        <Button
+            android:id="@+id/btnOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Allow display over other apps" />
+
+        <TextView
+            android:id="@+id/txtState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnTestNotif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Post test notification (close the phone!)" />
+
+        <Button
+            android:id="@+id/btnCancelNotif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel test notification" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Manual indicator (Phase 2 debug)"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnShowNow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Show dot on cover NOW" />
+
+        <Button
+            android:id="@+id/btnShowDelayed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show dot on cover in 8 s (close the phone!)" />
+
+        <Button
+            android:id="@+id/btnShowMulti"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show 3 dots in 8 s" />
+
+        <Button
+            android:id="@+id/btnHide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hide indicator" />
+
+        <TextView
+            android:id="@+id/txtLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="monospace"
+            android:textSize="11sp" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CoverLED</string>
+    <string name="battery_full">fully charged</string>
+    <string name="battery_hm">%1$d h %2$d min to full</string>
+    <string name="battery_m">%1$d min to full</string>
+    <string name="test_channel">CoverLED test</string>
+</resources>
