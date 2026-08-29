@@ -55,10 +55,29 @@ class CoverIndicatorActivity : AppCompatActivity() {
     // Duty cycle: one "beat" (blinkOnMs) then dark for blinkOffMs. Battery text is not blinked.
     // Beat = hard on/off, or a fade in + fade out (heartbeat) when fadeEnabled.
     private var beat: Animator? = null
+    private var allColors: IntArray = intArrayOf(Color.WHITE)
+    private var cycleIndex = 0
+
+    /** Cycle mode: one indicator; each beat wears the next app's color. */
+    private fun advanceCycle() {
+        if (settings.arrangement != Settings.ARR_CYCLE || allColors.isEmpty()) return
+        dots.colors = intArrayOf(allColors[cycleIndex % allColors.size])
+        cycleIndex++
+    }
+
+    // Cycle mode without blink: hard color change at the beat cadence.
+    private val cycleOnly = object : Runnable {
+        override fun run() {
+            advanceCycle()
+            handler.postDelayed(this, (settings.blinkOnMs + settings.blinkOffMs).toLong())
+        }
+    }
+
     private val blink = object : Runnable {
         override fun run() {
             val on = settings.blinkOnMs.toLong()
             beat?.cancel()
+            advanceCycle()
             when (settings.beatStyle) {
                 Settings.STYLE_LUBDUB -> {
                     // lub (strong) – short pause – dub (softer), all within the beat length
@@ -176,11 +195,14 @@ class CoverIndicatorActivity : AppCompatActivity() {
         handler.removeCallbacksAndMessages(null)
         beat?.cancel()
         dots.visibility = View.VISIBLE
+        dots.colors = if (settings.arrangement == Settings.ARR_CYCLE) intArrayOf(allColors.first()) else allColors
+        cycleIndex = 0
         if (settings.blinkEnabled) {
             dots.alpha = 0f
             handler.post(blink)
         } else {
             dots.alpha = 1f
+            if (settings.arrangement == Settings.ARR_CYCLE && allColors.size > 1) handler.post(cycleOnly)
         }
         chargingIntent?.let { renderBattery(it) }
     }
@@ -191,7 +213,9 @@ class CoverIndicatorActivity : AppCompatActivity() {
     }
 
     private fun applyIntent(intent: Intent?) {
-        dots.colors = intent?.getIntArrayExtra(EXTRA_COLORS) ?: intArrayOf(Color.WHITE)
+        allColors = intent?.getIntArrayExtra(EXTRA_COLORS) ?: intArrayOf(Color.WHITE)
+        cycleIndex = 0
+        dots.colors = if (settings.arrangement == Settings.ARR_CYCLE) intArrayOf(allColors.first()) else allColors
     }
 
     private fun renderBattery(i: Intent) {

@@ -189,9 +189,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
         findViewById<RadioGroup>(R.id.rgArrangement).apply {
-            check(if (st.arrangement == dev.lucas.coverled.Settings.ARR_ROW) R.id.rbRow else R.id.rbGeometric)
+            check(when (st.arrangement) {
+                dev.lucas.coverled.Settings.ARR_ROW -> R.id.rbRow
+                dev.lucas.coverled.Settings.ARR_CYCLE -> R.id.rbCycle
+                else -> R.id.rbGeometric
+            })
             setOnCheckedChangeListener { _, id ->
-                st.arrangement = if (id == R.id.rbRow) dev.lucas.coverled.Settings.ARR_ROW else dev.lucas.coverled.Settings.ARR_GEOMETRIC
+                st.arrangement = when (id) {
+                    R.id.rbRow -> dev.lucas.coverled.Settings.ARR_ROW
+                    R.id.rbCycle -> dev.lucas.coverled.Settings.ARR_CYCLE
+                    else -> dev.lucas.coverled.Settings.ARR_GEOMETRIC
+                }
             }
         }
         val lblSize = findViewById<TextView>(R.id.lblSize)

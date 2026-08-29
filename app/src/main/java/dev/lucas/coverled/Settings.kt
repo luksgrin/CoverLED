@@ -17,7 +17,7 @@ class Settings(context: Context) {
         get() = prefs.getString(KEY_STYLE, STYLE_BREATHE) ?: STYLE_BREATHE
         set(v) = prefs.edit().putString(KEY_STYLE, v).apply()
 
-    /** Row (side by side) or Geometric (triangle / square / pentagon / hexagon). */
+    /** Row, Geometric (triangle / square / …) or Cycle (one dot changing color per beat). */
     var arrangement: String
         get() = prefs.getString(KEY_ARRANGEMENT, ARR_GEOMETRIC) ?: ARR_GEOMETRIC
         set(v) = prefs.edit().putString(KEY_ARRANGEMENT, v).apply()
@@ -68,6 +68,7 @@ class Settings(context: Context) {
         const val KEY_CUSTOM_SHAPE = "custom_shape"
         const val ARR_ROW = "row"
         const val ARR_GEOMETRIC = "geometric"
+        const val ARR_CYCLE = "cycle"
         const val MAX_DOTS = 6
         const val SHAPE_FILE = "shape.png"
         /** Custom shape constraints (see README): PNG, transparent background, white/grayscale drawing. */

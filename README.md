@@ -59,8 +59,9 @@ notification; tick **Ignore** to keep an app from lighting the LED.
 (Channel light colors are a system-only API, so they can't be read by a third-party listener.)
 
 ### Several apps
-Up to **6** dots. Arrangement is *Row* or *Geometric* (2 = pair, 3 = triangle, 4 = square, 5 = pentagon,
-6 = hexagon). Dots are ordered **priority apps first** (tick *Priority* in the App colors screen), then by
+Up to **6** dots. Arrangement is *Row*, *Shape* (2 = pair, 3 = triangle, 4 = square, 5 = pentagon,
+6 = hexagon) or *One dot, cycling colors* — a single indicator that takes the next app's color on every
+beat (with blink off it simply switches color at the beat cadence). Dots are ordered **priority apps first** (tick *Priority* in the App colors screen), then by
 the order in which apps started notifying. With more than 6 apps pending, the last dot is **white** and
 stands for "others". **Dot size** slider: 8–64 dp.
 

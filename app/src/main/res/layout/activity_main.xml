@@ -112,7 +112,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <RadioButton android:id="@+id/rbRow" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Row" />
-            <RadioButton android:id="@+id/rbGeometric" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Triangle / square / …" />
+            <RadioButton android:id="@+id/rbGeometric" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Shape" />
+            <RadioButton android:id="@+id/rbCycle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="One dot, cycling colors" />
         </RadioGroup>
 
         <TextView
