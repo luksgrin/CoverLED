@@ -55,8 +55,9 @@ class CoverIndicatorActivity : AppCompatActivity() {
     private fun placeBattery(root: FrameLayout) {
         if (battery.width == 0 || root.width == 0) return
         val y = settings.batteryY.let { if (it < 0f) Settings.defaultBatteryY(cutoutBottomPx / root.height.toFloat()) else it }
-        battery.translationX = (settings.batteryX * root.width - battery.width / 2f).coerceIn(0f, (root.width - battery.width).toFloat().coerceAtLeast(0f))
-        battery.translationY = (y * root.height - battery.height / 2f).coerceIn(0f, (root.height - battery.height).toFloat().coerceAtLeast(0f))
+        val m = 12 * resources.displayMetrics.density   // keep a little air between the text and the panel edge
+        battery.translationX = (settings.batteryX * root.width - battery.width / 2f).coerceIn(m, (root.width - battery.width - m).coerceAtLeast(m))
+        battery.translationY = (y * root.height - battery.height / 2f).coerceIn(m, (root.height - battery.height - m).coerceAtLeast(m))
     }
     private lateinit var settings: Settings
     private val handler = Handler(Looper.getMainLooper())
