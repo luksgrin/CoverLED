@@ -41,7 +41,22 @@ jobs:
       - name: GitHub Release with the APK (direct install)
         uses: softprops/action-gh-release@v2
         with:
+          name: CoverLED ${{ github.ref_name }}
           files: CoverLED-${{ github.ref_name }}.apk
+          # Fixed header (install steps) + GitHub's generated list of changes since the previous tag.
+          body: |
+            ## Install
+            1. Download **`CoverLED-${{ github.ref_name }}.apk`** below on the phone and open it
+               (allow installs from your browser when asked). Updating over a previous release keeps your settings.
+            2. Open CoverLED → **Grant notification access** → allow.
+            3. **Allow display over other apps** → allow (Android otherwise blocks the indicator while the phone is closed).
+
+            Verified on Galaxy Z Flip5 (One UI 8.0) and Z Flip7 (One UI 8.5). Privacy: reads only which app
+            posted a notification, never its content; no internet permission —
+            [PRIVACY.md](https://github.com/luksgrin/CoverLED/blob/main/PRIVACY.md).
+
+            ## Changes
+          append_body: true
           generate_release_notes: true
 
       - name: Keep the AAB for Google Play upload
