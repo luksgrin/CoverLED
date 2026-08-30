@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); handleDebugIntent(intent) }
 
     private fun handleDebugIntent(intent: Intent) {
+        if (!BuildConfig.DEBUG) return   // the hooks accept intents from any app; debug builds only
         if (intent.hasExtra(EXTRA_AUTOSHOW)) {
             val n = intent.getIntExtra(EXTRA_AUTOSHOW, 1)
             if (n <= 0) IndicatorController.hide(this) else IndicatorController.show(this, PALETTE.copyOf(n.coerceAtMost(PALETTE.size)))

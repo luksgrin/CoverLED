@@ -1,0 +1,24 @@
+Remember the notification LED on older Galaxy phones? Glance at the phone, see a colored light, know what's waiting without unlocking. CoverLED brings that back on the Galaxy Z Flip's cover screen.
+
+Close the phone. When a notification arrives, a small colored dot appears on the cover — one color per app, like the old LED. Dismiss the notification and it disappears.
+
+DESIGNED TO STAY OUT OF YOUR WAY
+• Tap the dot, or wake the cover with the side key, and it hides so you can read your notifications on Samsung's cover screen.
+• It comes back by itself once the cover goes dark again, and immediately for new notifications.
+
+MAKE IT YOURS
+• Colors: each app gets the color it declares for its LED, else its accent color, else the color of its icon — or pick your own. Mark apps as priority, or ignore them.
+• Beat: hard blink, soft breathing, or a lub-dub heartbeat. Adjustable timing and brightness.
+• Several apps: dots in a row, in a shape (triangle, square, hexagon…), or one dot cycling through colors. Up to six.
+• Shape: a circle, or your own PNG tinted per app.
+• Position: drag the dot and the charging line anywhere on the cover.
+• While charging, shows battery percentage and time to full.
+
+PRIVACY
+CoverLED reads only which app posted a notification — never its content. It has no internet permission and no analytics. Everything stays on your phone.
+
+PERMISSIONS
+• Notification access: to know that a notification is waiting and from which app.
+• Display over other apps: Android requires it for the indicator to appear on the cover screen while the phone is closed.
+
+Verified on Galaxy Z Flip5 (One UI 8.0) and Galaxy Z Flip7 (One UI 8.5). Note: the cover panel stays on at low brightness while a dot is showing; blinking keeps the battery cost down.

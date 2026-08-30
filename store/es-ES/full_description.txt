@@ -1,0 +1,24 @@
+¿Recuerdas el LED de notificaciones de los Galaxy antiguos? Mirabas el teléfono, veías una luz de color y sabías qué esperaba sin desbloquear. CoverLED lo trae de vuelta a la pantalla exterior del Galaxy Z Flip.
+
+Cierra el teléfono. Cuando llega una notificación, aparece un pequeño punto de color en la pantalla exterior: un color por app, como el LED de antes. Descarta la notificación y desaparece.
+
+PENSADO PARA NO MOLESTAR
+• Toca el punto, o despierta la pantalla con el botón lateral, y se oculta para que leas tus notificaciones en la pantalla de Samsung.
+• Vuelve solo cuando la pantalla se apaga, e inmediatamente si llega una notificación nueva.
+
+A TU GUSTO
+• Colores: cada app recibe el color que declara para su LED, si no su color de acento, si no el de su icono; o elige el tuyo. Marca apps como prioritarias o ignóralas.
+• Latido: parpadeo seco, respiración suave o un lub-dub. Tiempos y brillo ajustables.
+• Varias apps: puntos en fila, en forma (triángulo, cuadrado, hexágono…) o un solo punto que cambia de color. Hasta seis.
+• Forma: un círculo o tu propio PNG teñido por app.
+• Posición: arrastra el punto y la línea de carga a donde quieras.
+• Mientras carga, muestra el porcentaje y el tiempo hasta completar.
+
+PRIVACIDAD
+CoverLED solo lee qué app envió una notificación, nunca su contenido. No tiene permiso de internet ni analíticas. Todo se queda en tu teléfono.
+
+PERMISOS
+• Acceso a notificaciones: para saber que hay una notificación y de qué app.
+• Mostrar sobre otras apps: Android lo exige para que el indicador aparezca en la pantalla exterior con el teléfono cerrado.
+
+Probado en Galaxy Z Flip5 (One UI 8.0) y Galaxy Z Flip7 (One UI 8.5). Nota: la pantalla exterior permanece encendida a bajo brillo mientras hay un punto; el parpadeo reduce el consumo.

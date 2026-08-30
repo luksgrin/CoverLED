@@ -145,6 +145,9 @@ The UI follows the system language. Included: English, Spanish, German, French, 
 Japanese (`res/values-<lang>/strings.xml`); the charging duration ("1 h 43 min") is formatted by ICU
 for any locale. To add a language, copy `values-es/strings.xml` to `values-<lang>/` and translate.
 
+## License
+GPL-3.0 — see [`LICENSE`](LICENSE).
+
 ## Known limitations
 - Can't use Samsung's low-power AOD (system-only), so a pending dot keeps the cover panel on.
   Battery impact not yet measured overnight.

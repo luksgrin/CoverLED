@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Decode signing keystore
+        run: echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/release.jks"
+
+      - name: Build signed APK and AAB
+        env:
+          SIGNING_STORE_FILE: ${{ runner.temp }}/release.jks
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: ./gradlew --no-daemon assembleRelease bundleRelease lintRelease
+
+      - name: Rename outputs
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk "CoverLED-${GITHUB_REF_NAME}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "CoverLED-${GITHUB_REF_NAME}.aab"
+
+      - name: GitHub Release with the APK (direct install)
+        uses: softprops/action-gh-release@v2
+        with:
+          files: CoverLED-${{ github.ref_name }}.apk
+          generate_release_notes: true
+
+      - name: Keep the AAB for Google Play upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoverLED-${{ github.ref_name }}-aab
+          path: CoverLED-${{ github.ref_name }}.aab
+          retention-days: 90
