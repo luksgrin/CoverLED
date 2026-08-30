@@ -44,7 +44,8 @@ app always gets a dot, or **Ignore** so it never does.
 
 ## Install and set up
 
-1. Build (below) or take `app-debug.apk` from the latest GitHub Actions run, install it.
+1. Download the latest `CoverLED-vX.Y.Z.apk` from the **[Releases](https://github.com/luksgrin/CoverLED/releases)**
+   page on the phone and open it (Android asks once to allow installs from your browser). Google Play listing: coming.
 2. Open CoverLED and tap **Grant notification access** → allow CoverLED.
 3. Tap **Allow display over other apps** → allow. This one is required: Android otherwise blocks an
    app in the background from putting anything on the screen, and that is exactly what the LED is.
