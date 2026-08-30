@@ -88,6 +88,7 @@ class SettingsActivity : AppCompatActivity() {
         c.addView(ui.card(
             ui.sliderRow(getString(R.string.brightness).substringBefore(':'), 1f, 100f, 1f, (st.brightness * 100).toInt().toFloat(), { "${it.toInt()} %" }) { st.brightness = it / 100f },
             ui.switchRow(getString(R.string.battery_switch), null, st.showBattery) { st.showBattery = it },
+            ui.switchRow(getString(R.string.dnd_switch), getString(R.string.dnd_help), st.respectDnd) { st.respectDnd = it },
         ))
         c.addView(ui.note(getString(R.string.brightness_help)))
     }

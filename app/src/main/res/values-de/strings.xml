@@ -95,4 +95,6 @@
     <string name="current_shape">Aktuelle Form</string>
     <string name="pending_title">Gerade jetzt</string>
     <string name="dev_post_hint">Tippen, Telefon zuklappen und aufs Außendisplay schauen.</string>
+    <string name="dnd_switch">„Nicht stören“ beachten</string>
+    <string name="dnd_help">Solange „Nicht stören“ aktiv ist, bleibt die LED aus – z. B. nachts. Ausstehende Benachrichtigungen erscheinen, wenn es endet.</string>
 </resources>

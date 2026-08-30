@@ -37,7 +37,17 @@ class IndicatorCoordinator(private val context: Context) {
     private val fold = FoldState(context)
     private val colors = AppColors(context)
 
-    private var shouldShow = false          // pending ∧ closed
+    private val settings = Settings(context)
+    private val dnd = kotlinx.coroutines.flow.MutableStateFlow(false)
+    private val respectDnd = kotlinx.coroutines.flow.MutableStateFlow(settings.respectDnd)
+    private val prefListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == Settings.KEY_RESPECT_DND) respectDnd.value = settings.respectDnd
+    }
+
+    /** Called by the listener service on onInterruptionFilterChanged / connect. */
+    fun setDndActive(active: Boolean) { if (dnd.value != active) Log.i(TAG, "DND active=$active"); dnd.value = active }
+
+    private var shouldShow = false          // pending ∧ closed ∧ ¬(dnd ∧ respectDnd)
     private var snoozed = false
     private var lastLaunchAt = 0L
     private var lastSnapshot: Map<String, Int> = emptyMap()
@@ -79,13 +89,15 @@ class IndicatorCoordinator(private val context: Context) {
             context, receiver, IntentFilter(CoverIndicatorActivity.ACTION_USER_DISMISS),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
+        settings.prefs.registerOnSharedPreferenceChangeListener(prefListener)
         scope.launch {
-            combine(state.snapshot, fold.closed) { snap, closed -> snap to closed }
-                .collect { (snap, closed) -> apply(snap, closed) }
+            combine(state.snapshot, fold.closed, dnd, respectDnd) { snap, closed, dndOn, respect -> Triple(snap, closed, dndOn && respect) }
+                .collect { (snap, closed, quiet) -> apply(snap, closed, quiet) }
         }
     }
 
     fun stop() {
+        settings.prefs.unregisterOnSharedPreferenceChangeListener(prefListener)
         scope.cancel()
         handler.removeCallbacks(reshow)
         runCatching { context.unregisterReceiver(receiver) }
@@ -99,12 +111,12 @@ class IndicatorCoordinator(private val context: Context) {
         IndicatorController.hide(context)
     }
 
-    private fun apply(snap: Map<String, Int>, closed: Boolean) {
-        val want = snap.isNotEmpty() && closed
+    private fun apply(snap: Map<String, Int>, closed: Boolean, quiet: Boolean) {
+        val want = snap.isNotEmpty() && closed && !quiet
         val somethingNew = snap.any { (pkg, n) -> n > (lastSnapshot[pkg] ?: 0) }
         lastSnapshot = snap
         if (somethingNew && snoozed) { Log.i(TAG, "new notification -> un-snooze"); snoozed = false }
-        Log.i(TAG, "apply: pending=${snap.size} closed=$closed snoozed=$snoozed -> ${if (want && !snoozed) "SHOW" else "HIDE"}")
+        Log.i(TAG, "apply: pending=${snap.size} closed=$closed dnd=$quiet snoozed=$snoozed -> ${if (want && !snoozed) "SHOW" else "HIDE"}")
         shouldShow = want
         if (!want) {
             handler.removeCallbacks(reshow)

@@ -101,4 +101,6 @@
     <string name="current_shape">Current shape</string>
     <string name="pending_title">Right now</string>
     <string name="dev_post_hint">Tap, then close the phone and watch the cover.</string>
+    <string name="dnd_switch">Respect Do not disturb</string>
+    <string name="dnd_help">While Do not disturb is on, the LED stays off — e.g. your night schedule. Pending notifications light up when it ends.</string>
 </resources>

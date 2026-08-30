@@ -95,4 +95,6 @@
     <string name="current_shape">Forma actual</string>
     <string name="pending_title">Ahora mismo</string>
     <string name="dev_post_hint">Toca, cierra el teléfono y mira la pantalla exterior.</string>
+    <string name="dnd_switch">Respetar No molestar</string>
+    <string name="dnd_help">Mientras No molestar esté activo, el LED permanece apagado (p. ej., tu horario nocturno). Las notificaciones pendientes se muestran al terminar.</string>
 </resources>

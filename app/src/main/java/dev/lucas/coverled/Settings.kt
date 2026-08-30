@@ -53,6 +53,11 @@ class Settings(context: Context) {
         get() = prefs.getFloat(KEY_BRIGHTNESS, 0.05f)
         set(v) = prefs.edit().putFloat(KEY_BRIGHTNESS, v.coerceIn(0.01f, 1f)).apply()
 
+    /** Keep the LED off while Do Not Disturb is active (battery; nobody looks at night). */
+    var respectDnd: Boolean
+        get() = prefs.getBoolean(KEY_RESPECT_DND, true)
+        set(v) = prefs.edit().putBoolean(KEY_RESPECT_DND, v).apply()
+
     /** Show the charging line under the dots. */
     var showBattery: Boolean
         get() = prefs.getBoolean(KEY_BATTERY, true)
@@ -98,5 +103,6 @@ class Settings(context: Context) {
         const val KEY_BLINK_OFF = "blink_off_ms"
         const val KEY_BRIGHTNESS = "brightness"
         const val KEY_BATTERY = "show_battery"
+        const val KEY_RESPECT_DND = "respect_dnd"
     }
 }

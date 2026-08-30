@@ -95,4 +95,6 @@
     <string name="current_shape">Forma atual</string>
     <string name="pending_title">Neste momento</string>
     <string name="dev_post_hint">Toque, feche o telemóvel e olhe para o ecrã exterior.</string>
+    <string name="dnd_switch">Respeitar «Não incomodar»</string>
+    <string name="dnd_help">Enquanto «Não incomodar» estiver ativo, o LED fica apagado (p. ex. à noite). As notificações pendentes aparecem quando terminar.</string>
 </resources>

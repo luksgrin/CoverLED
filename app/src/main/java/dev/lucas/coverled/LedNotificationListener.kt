@@ -24,7 +24,10 @@ class LedNotificationListener : NotificationListenerService() {
     override fun onListenerConnected() {
         Log.i(TAG, "listener connected")
         instance = this
-        coordinator = IndicatorCoordinator(this).also { it.start() }
+        coordinator = IndicatorCoordinator(this).also {
+            it.start()
+            it.setDndActive(isDnd(currentInterruptionFilter))
+        }
         // Seed from what is already in the shade so we don't miss anything posted while we were off.
         val current = runCatching { activeNotifications.toList() }.getOrDefault(emptyList())
             .filter { relevant(it) }
@@ -37,6 +40,13 @@ class LedNotificationListener : NotificationListenerService() {
         instance = null
         coordinator?.stop(); coordinator = null
     }
+
+    override fun onInterruptionFilterChanged(filter: Int) {
+        coordinator?.setDndActive(isDnd(filter))
+    }
+
+    /** Anything other than "all notifications" counts as Do Not Disturb (priority only, alarms only, none). */
+    private fun isDnd(filter: Int) = filter != INTERRUPTION_FILTER_ALL && filter != INTERRUPTION_FILTER_UNKNOWN
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         if (!relevant(sbn)) return

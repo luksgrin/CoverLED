@@ -95,4 +95,6 @@
     <string name="current_shape">Forma attuale</string>
     <string name="pending_title">Adesso</string>
     <string name="dev_post_hint">Tocca, chiudi il telefono e guarda lo schermo esterno.</string>
+    <string name="dnd_switch">Rispetta «Non disturbare»</string>
+    <string name="dnd_help">Finché «Non disturbare» è attivo, il LED resta spento, ad es. di notte. Le notifiche in attesa compaiono quando termina.</string>
 </resources>

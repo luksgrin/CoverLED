@@ -95,4 +95,6 @@
     <string name="current_shape">Forme actuelle</string>
     <string name="pending_title">En ce moment</string>
     <string name="dev_post_hint">Touchez, fermez le téléphone et regardez l\'écran externe.</string>
+    <string name="dnd_switch">Respecter « Ne pas déranger »</string>
+    <string name="dnd_help">Tant que « Ne pas déranger » est actif, la LED reste éteinte – par ex. la nuit. Les notifications en attente s\'affichent à la fin.</string>
 </resources>

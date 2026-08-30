@@ -95,4 +95,6 @@
     <string name="current_shape">現在の形</string>
     <string name="pending_title">現在</string>
     <string name="dev_post_hint">タップして端末を閉じ、カバー画面を確認してください。</string>
+    <string name="dnd_switch">「通知をミュート」に従う</string>
+    <string name="dnd_help">「通知をミュート」中はLEDを消灯します（夜間スケジュールなど）。終了すると待機中の通知が表示されます。</string>
 </resources>
