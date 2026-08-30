@@ -1,4 +1,4 @@
-package dev.lucas.coverled
+package xyz.luksgrin.coverled
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

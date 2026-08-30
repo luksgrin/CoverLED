@@ -1,4 +1,4 @@
-package dev.lucas.coverled
+package xyz.luksgrin.coverled
 
 import android.animation.Animator
 import android.animation.AnimatorSet
@@ -41,9 +41,9 @@ class CoverIndicatorActivity : AppCompatActivity() {
     companion object {
         const val TAG = "CoverLED"
         const val EXTRA_COLORS = "colors"
-        const val ACTION_HIDE = "dev.lucas.coverled.HIDE"
+        const val ACTION_HIDE = "xyz.luksgrin.coverled.HIDE"
         /** Sent when the user taps the LED: "let me see the screen". */
-        const val ACTION_USER_DISMISS = "dev.lucas.coverled.USER_DISMISS"
+        const val ACTION_USER_DISMISS = "xyz.luksgrin.coverled.USER_DISMISS"
     }
 
     private lateinit var dots: DotView

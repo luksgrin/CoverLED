@@ -1,4 +1,4 @@
-package dev.lucas.coverled
+package xyz.luksgrin.coverled
 
 import android.content.Intent
 import android.graphics.PorterDuff
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import dev.lucas.coverled.Settings as Prefs
+import xyz.luksgrin.coverled.Settings as Prefs
 
 /** One settings category per screen; which one is chosen by [EXTRA_SECTION]. */
 class SettingsActivity : AppCompatActivity() {

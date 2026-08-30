@@ -1,4 +1,4 @@
-package dev.lucas.coverled
+package xyz.luksgrin.coverled
 
 import android.app.Notification
 import android.service.notification.NotificationListenerService

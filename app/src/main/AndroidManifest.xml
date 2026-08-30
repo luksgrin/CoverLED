@@ -55,7 +55,7 @@
             android:resizeableActivity="true"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
-            android:taskAffinity="dev.lucas.coverled.indicator"
+            android:taskAffinity="xyz.luksgrin.coverled.indicator"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|density|uiMode"
             android:theme="@style/Theme.CoverLED.Indicator" />
 

@@ -51,8 +51,8 @@ app always gets a dot, or **Ignore** so it never does.
 
 Or over adb:
 ```bash
-adb shell cmd notification allow_listener dev.lucas.coverled/dev.lucas.coverled.LedNotificationListener
-adb shell appops set dev.lucas.coverled SYSTEM_ALERT_WINDOW allow
+adb shell cmd notification allow_listener xyz.luksgrin.coverled/xyz.luksgrin.coverled.LedNotificationListener
+adb shell appops set xyz.luksgrin.coverled SYSTEM_ALERT_WINDOW allow
 ```
 
 ## How it works
@@ -77,7 +77,7 @@ Android notifications ─▶ LedNotificationListener ─▶ NotificationState (p
 - Only package names and notification keys are stored — never notification content.
 
 ```
-app/src/main/java/dev/lucas/coverled/
+app/src/main/java/xyz/luksgrin/coverled/
   LedNotificationListener.kt  NotificationListenerService; hosts the coordinator
   NotificationState.kt        pending notifications per package (SharedPreferences, no content)
   AppColors.kt                package → color (user / learned / icon), priority, ignore list
@@ -113,9 +113,9 @@ CI (`.github/workflows/android.yml`) runs `assembleDebug` + `lintDebug` on every
 ```bash
 adb logcat -s CoverLED
 adb shell cmd notification post -t Hi test1 "hello"                        # a real notification from another package
-adb shell am start -n dev.lucas.coverled/.MainActivity --ei testnotif 1   # our own test notification (0 = cancel)
-adb shell am start -n dev.lucas.coverled/.MainActivity --ez clearall true # dismiss everything pending
-adb shell am start -n dev.lucas.coverled/.MainActivity --ei autoshow 3   # force 3 dots (bypasses state; 0 = hide)
+adb shell am start -n xyz.luksgrin.coverled/.MainActivity --ei testnotif 1   # our own test notification (0 = cancel)
+adb shell am start -n xyz.luksgrin.coverled/.MainActivity --ez clearall true # dismiss everything pending
+adb shell am start -n xyz.luksgrin.coverled/.MainActivity --ei autoshow 3   # force 3 dots (bypasses state; 0 = hide)
 adb shell screencap -d <physical id> /sdcard/c.png   # id from: adb shell dumpsys display | grep uniqueId
 ```
 

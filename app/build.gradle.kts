@@ -15,11 +15,11 @@ fun signingValue(key: String, env: String): String? = keystoreProps.getProperty(
 val hasReleaseSigning = signingValue("storeFile", "SIGNING_STORE_FILE") != null
 
 android {
-    namespace = "dev.lucas.coverled"
+    namespace = "xyz.luksgrin.coverled"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "dev.lucas.coverled"
+        applicationId = "xyz.luksgrin.coverled"
         // Galaxy Z Flip5 shipped with Android 13; verified on Android 16 (Flip5 / Flip7).
         minSdk = 33
         targetSdk = 36
